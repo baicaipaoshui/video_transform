@@ -1,0 +1,16 @@
+Skill: world-understanding
+Case ${case_id} 的World交接局部修订。
+只读任务包 ${request_path}；focused_context已经由代码抽取问题相关的当前值与Batch证据，禁止再读取base World、完整Batch、完整Schema或历史Case/session。
+需要视觉裁决时先查看evidence_frames的review_path原始图片（包含Batch加密采样帧），不足时再读取frame_index_path。
+方向未知时必须复核单行/禁转标志及地面箭头；没有横向车辆运动不等于没有方向证据，标志不能证明车道数。
+observed只表示观察来源，不等于问题已解决；unknown和相反证据也必须审查。
+heading_rad遵循任务包coordinate_convention的局部参考线定义，不需要GPS/指南针；不能把路臂所在方位当参考线方向。
+只输出world-closure-patch-v1小补丁，不输出完整World。
+request_sha256/base_sha256必须原样复制；operations只能使用allowed_paths中的精确JSON Pointer，只允许add/replace，逐项附本Case evidence_frame_ids。
+只修issues涉及字段及其必要引用；不得删除问题、歧义或Actor，不得改Actor身份，不得发明事实。
+若issues指出车道定义缺失，依据帧中标线及道路边界，在允许路径补齐roads/lanes及field_evidence；不能只重复车道数量。为已识别车道分配稳定ID不需要猜测米制宽度；保留未知度量及对向车道数的未决记录，不在World裁决Actor动态车道归属。
+若证据不足或权限不支持所需修复，按stop_contract返回零操作及具体阻塞原因；不要为凑操作数补无关证据。
+junction关系数组允许在指定父路径局部替换；双向路臂不是两个物理道路，但必须有分向车道证据。
+只写一次 ${candidate_path} 后停止，不解释，不创建subagent。
+
+可见车道数与不可见远端分别裁决。

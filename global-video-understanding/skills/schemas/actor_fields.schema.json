@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Shared Actor wire fields. Required sets and stage-specific observations remain in their owning schemas.",
+  "$defs": {
+    "actor_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "actor_type": {
+      "type": "string",
+      "minLength": 1,
+      "description": "新建身份使用 canonical_actor_type 大类，汽车写 vehicle，车型写 vehicle_class。下列 legacy 分支仅兼容已有身份；下游阶段逐字沿用冻结 Registry.actor_type，不重写身份。未知对象用 unknown；特殊车辆仍是 vehicle。",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/canonical_actor_type"
+        },
+        {
+          "$ref": "#/$defs/legacy_vehicle_type"
+        },
+        {
+          "enum": [
+            "parked_vehicles",
+            "pedestrian_pair",
+            "other_object",
+            "bicyclist",
+            "bicycle_rider",
+            "animals",
+            "dog",
+            "cat",
+            "horse",
+            "deer"
+          ]
+        }
+      ]
+    },
+    "identity_description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "first_seen_frame_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lane_reference": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "description": "Known global World lane reference, or null when unknown. Never derive the ID from a road-local ordinal."
+    },
+    "road_reference": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "description": "Known World road reference, or null when unknown."
+    },
+    "ordinal_from_right": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "description": "Zero-based road-local position, or null when unknown; not the global lane ID suffix."
+    },
+    "canonical_actor_type": {
+      "enum": [
+        "vehicle",
+        "pedestrian",
+        "cyclist",
+        "animal",
+        "static_obstacle",
+        "other",
+        "unknown",
+        "vehicle_group",
+        "pedestrian_group",
+        "cyclist_group",
+        "animal_group"
+      ]
+    },
+    "legacy_vehicle_type": {
+      "anyOf": [
+        {
+          "enum": [
+            "car",
+            "sedan",
+            "suv",
+            "van",
+            "truck",
+            "bus",
+            "motorcycle",
+            "bicycle",
+            "tractor",
+            "pickup",
+            "compact_car",
+            "coupe",
+            "mpv",
+            "minivan",
+            "box_truck",
+            "hatchback",
+            "minivan_or_suv",
+            "ego_vehicle"
+          ]
+        },
+        {
+          "type": "string",
+          "pattern": "^(vehicle|car|truck)_.+$"
+        }
+      ],
+      "description": "Legacy vehicle aliases, excluding the canonical vehicle_group category."
+    },
+    "color": {
+      "description": "主车身颜色；无法可靠判断时保留 unknown，由 Converter 在执行副本中使用获准默认值。",
+      "anyOf": [
+        {"type": ["string", "null"], "minLength": 1},
+        {
+          "type": "object",
+          "required": ["status", "value"],
+          "properties": {
+            "status": {"enum": ["observed", "estimated", "unknown"]},
+            "value": {"type": ["string", "null"]},
+            "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+            "reason": {"type": "string"},
+            "frame_id": {"type": "string", "minLength": 1},
+            "time_s": {"type": "number"}
+          },
+          "allOf": [{
+            "if": {"properties": {"status": {"const": "estimated"}}, "required": ["status"]},
+            "then": {"required": ["confidence", "reason"]}
+          }],
+          "additionalProperties": true
+        }
+      ]
+    },
+    "vehicle_class": {
+      "description": "车辆细分类。observed 的视频位置必须写在本字段的 frame_id/time_s 或本字段的 evidence[]；Actor 同级 evidence 和 reason 中的帧号不算本字段证据。看不清写 status=unknown、value=null、reason。优先 sedan/suv/van/truck/bus/motorcycle/bicycle/tractor/pickup；有证据的其他车型（如 fire_engine）保留原名。不要猜 sedan；Converter 仅在执行副本中回退。旧 subtype 仅作兼容输入。",
+      "anyOf": [
+        {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "required": [
+            "value",
+            "status"
+          ],
+          "properties": {
+            "value": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            },
+            "status": {
+              "enum": [
+                "observed",
+                "estimated",
+                "unknown"
+              ]
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "reason": {
+              "type": "string"
+            },
+            "frame_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "time_s": {
+              "type": "number"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {"type": "object"}
+            }
+          },
+          "allOf": [{
+            "if": {"properties": {"status": {"const": "observed"}}},
+            "then": {"anyOf": [
+              {"required": ["frame_id"]},
+              {"required": ["time_s"]},
+              {"properties": {"evidence": {"contains": {
+                "type": "object",
+                "required": ["status"],
+                "properties": {"status": {"const": "observed"}},
+                "anyOf": [{"required": ["frame_id"]}, {"required": ["time_s"]}]
+              }}}, "required": ["evidence"]}
+            ]}
+          }],
+          "additionalProperties": true
+        }
+      ]
+    }
+  }
+}

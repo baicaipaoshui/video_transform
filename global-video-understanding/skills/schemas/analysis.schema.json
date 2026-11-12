@@ -1,0 +1,561 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "not": {
+        "required": [
+          "kind"
+        ]
+      },
+      "properties": {
+        "status": {
+          "enum": [
+            "observed",
+            "estimated",
+            "unknown"
+          ]
+        },
+        "frame_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "time_s": {
+          "type": "number",
+          "minimum": 0
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "observed"
+              }
+            }
+          },
+          "then": {
+            "anyOf": [
+              {
+                "required": [
+                  "frame_id"
+                ]
+              },
+              {
+                "required": [
+                  "time_s"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "estimated"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "confidence"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "unknown"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "reason"
+            ]
+          }
+        }
+      ],
+      "additionalProperties": true
+    },
+    "road": {
+      "type": "object",
+      "required": [
+        "road_id",
+        "lane_ids"
+      ],
+      "properties": {
+        "road_id": {
+          "pattern": "^road_[0-9]{3}$"
+        },
+        "lane_ids": {
+          "type": "array",
+          "description": "Identified lane IDs; pending Converter projection may retain an empty observation list.",
+          "uniqueItems": true,
+          "items": {
+            "pattern": "^lane_[0-9]{3}$"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "lane": {
+      "type": "object",
+      "required": [
+        "lane_id"
+      ],
+      "properties": {
+        "lane_id": {
+          "pattern": "^lane_[0-9]{3}$"
+        },
+        "width_m": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/positive_width"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "value",
+                "status"
+              ],
+              "properties": {
+                "value": {
+                  "type": "null"
+                },
+                "status": {
+                  "const": "unknown"
+                }
+              },
+              "additionalProperties": true
+            },
+            {
+              "const": "unknown"
+            }
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "actor": {
+      "type": "object",
+      "required": [
+        "actor_id",
+        "actor_type",
+        "identity_description",
+        "trajectory"
+      ],
+      "properties": {
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor_type": {
+          "$ref": "actor_fields.schema.json#/$defs/actor_type"
+        },
+        "color": {
+          "$ref": "actor_fields.schema.json#/$defs/color"
+        },
+        "identity_description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "trajectory": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object"
+          }
+        },
+        "vehicle_class": {
+          "$ref": "actor_fields.schema.json#/$defs/vehicle_class"
+        }
+      },
+      "additionalProperties": true
+    },
+    "event": {
+      "type": "object",
+      "required": [
+        "event_id",
+        "involved_actor_ids",
+        "evidence"
+      ],
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "involved_actor_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "lane_marking": {
+      "type": "object",
+      "properties": {
+        "marking_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "marking_type": {},
+        "type": {},
+        "between": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "pattern": "^lane_[0-9]{3}$"
+          }
+        },
+        "side": {
+          "enum": [
+            "left",
+            "right"
+          ]
+        },
+        "lane_id": {
+          "pattern": "^lane_[0-9]{3}$"
+        },
+        "road_id": {
+          "pattern": "^road_[0-9]{3}$"
+        },
+        "location": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "anyOf": [
+            {
+              "required": [
+                "type"
+              ]
+            },
+            {
+              "required": [
+                "marking_type"
+              ]
+            }
+          ]
+        },
+        {
+          "anyOf": [
+            {
+              "required": [
+                "marking_id"
+              ]
+            },
+            {
+              "required": [
+                "between"
+              ]
+            },
+            {
+              "required": [
+                "side"
+              ]
+            },
+            {
+              "required": [
+                "location"
+              ]
+            }
+          ]
+        }
+      ],
+      "additionalProperties": true
+    },
+    "positive_width": {
+      "oneOf": [
+        {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        {
+          "type": "object",
+          "required": [
+            "value"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          "additionalProperties": true
+        }
+      ]
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scene_type",
+    "road",
+    "ego",
+    "actors",
+    "events",
+    "quality_report"
+  ],
+  "properties": {
+    "scene_type": {
+      "enum": [
+        "highway",
+        "intersection"
+      ]
+    },
+    "road": {
+      "type": "object",
+      "required": [
+        "roads",
+        "lanes",
+        "lane_markings"
+      ],
+      "properties": {
+        "roads": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/road"
+          }
+        },
+        "lanes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/lane"
+          }
+        },
+        "lane_markings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lane_marking"
+          }
+        },
+        "traffic_direction": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lane_count_opposite_direction": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "ego": {
+      "type": "object",
+      "required": [
+        "actor_id",
+        "trajectory"
+      ],
+      "properties": {
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "trajectory": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "actors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/actor"
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/event"
+      }
+    },
+    "quality_report": {
+      "type": "object"
+    },
+    "junctions": {
+      "type": "array"
+    },
+    "environment": {
+      "type": "object"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "interactions": {
+      "type": "array"
+    },
+    "simulation_scenarios": {
+      "type": "array"
+    },
+    "limitations": {
+      "type": "array"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "quality_report"
+        ],
+        "properties": {
+          "quality_report": {
+            "required": [
+              "execution_ready",
+              "execution_projection"
+            ],
+            "properties": {
+              "execution_ready": {
+                "const": false
+              },
+              "execution_projection": {
+                "const": "analysis_values_then_hardcoded_fallbacks"
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "road": {
+            "properties": {
+              "roads": {
+                "items": {
+                  "properties": {
+                    "lane_ids": {
+                      "minItems": 1
+                    }
+                  }
+                }
+              },
+              "lanes": {
+                "items": {
+                  "required": [
+                    "width_m"
+                  ],
+                  "properties": {
+                    "width_m": {
+                      "$ref": "#/$defs/positive_width"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "allOf": [
+          {
+            "properties": {
+              "scene_type": {
+                "const": "intersection"
+              }
+            }
+          },
+          {
+            "not": {
+              "required": [
+                "quality_report"
+              ],
+              "properties": {
+                "quality_report": {
+                  "required": [
+                    "execution_ready"
+                  ],
+                  "properties": {
+                    "execution_ready": {
+                      "const": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "then": {
+        "required": [
+          "junctions",
+          "simulation_scenarios"
+        ],
+        "properties": {
+          "junctions": {
+            "minItems": 1
+          },
+          "simulation_scenarios": {
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "involved_actor_ids",
+                "initial_conditions"
+              ],
+              "properties": {
+                "involved_actor_ids": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "initial_conditions": {
+                  "type": "object",
+                  "minProperties": 1
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    }
+  ]
+}

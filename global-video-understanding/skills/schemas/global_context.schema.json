@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "measurement": {
+      "type": "object",
+      "required": ["value", "status"],
+      "properties": {
+        "value": {"type": "number"},
+        "status": {"enum": ["observed", "estimated"]},
+        "time_s": {"type": "number", "minimum": 0},
+        "frame_id": {"type": "string", "minLength": 1},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "allOf": [
+        {"if": {"properties": {"status": {"const": "observed"}}}, "then": {"anyOf": [{"required": ["time_s"]}, {"required": ["frame_id"]}]}},
+        {"if": {"properties": {"status": {"const": "estimated"}}}, "then": {"required": ["confidence"]}}
+      ],
+      "additionalProperties": true
+    },
+    "actor_hypothesis": {
+      "type": "object",
+      "required": ["actor_id", "actor_type", "first_seen_frame_id", "identity_description"],
+      "properties": {
+        "actor_id": {"type": "string", "minLength": 1},
+        "actor_type": {"type": "string", "minLength": 1},
+        "first_seen_frame_id": {"type": "string", "minLength": 1},
+        "identity_description": {"type": "string", "minLength": 1},
+        "is_static": {"type": "boolean"},
+        "simulation_role": {"enum": ["participant", "background"]},
+        "initial_position_ego_m": {"$ref": "#/$defs/position"},
+        "final_position_ego_m": {"$ref": "#/$defs/position"},
+        "speed_mps": {"oneOf": [{"type": "number", "minimum": 0}, {"$ref": "#/$defs/measurement"}]},
+        "intersection_entry_s": {"$ref": "#/$defs/measurement"}
+      },
+      "additionalProperties": true
+    },
+    "position": {
+      "type": "object",
+      "required": ["x", "y", "status", "confidence"],
+      "properties": {
+        "x": {"type": "number"},
+        "y": {"type": "number"},
+        "status": {"const": "estimated"},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "additionalProperties": true
+    },
+    "critical_interval": {
+      "type": "object",
+      "required": ["start_s", "end_s"],
+      "properties": {
+        "start_s": {"type": "number", "minimum": 0},
+        "end_s": {"type": "number", "minimum": 0},
+        "reason": {"type": "string"},
+        "focus": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": true
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["scene_type", "event_hypothesis", "event_phases", "actor_hypotheses", "critical_intervals", "questions_to_verify"],
+  "properties": {
+    "scene_type": {"enum": ["highway", "intersection"]},
+    "event_hypothesis": {"type": "object"},
+    "event_phases": {"type": "array"},
+    "actor_hypotheses": {"type": "array", "items": {"$ref": "#/$defs/actor_hypothesis"}},
+    "critical_intervals": {"type": "array", "maxItems": 4, "items": {"$ref": "#/$defs/critical_interval"}},
+    "questions_to_verify": {"type": "array"}
+    ,"scene_facts": {
+      "type": "object",
+      "required": ["travel_lane_count", "ego_lane_from_right", "left_parking_strip", "right_parking_strip", "stop_line_x_m", "crosswalk_count", "traffic_light_count"],
+      "properties": {
+        "travel_lane_count": {"type": "integer", "minimum": 1},
+        "ego_lane_from_right": {"type": "integer", "minimum": 1},
+        "left_parking_strip": {"type": "boolean"},
+        "right_parking_strip": {"type": "boolean"},
+        "stop_line_x_m": {"oneOf": [{"type": "number", "exclusiveMinimum": 0}, {"$ref": "#/$defs/measurement"}]},
+        "ego_speed_mps": {"oneOf": [{"type": "number", "minimum": 0}, {"$ref": "#/$defs/measurement"}]},
+        "ego_stop_line_crossing_s": {"$ref": "#/$defs/measurement"},
+        "crosswalk_count": {"type": "integer", "minimum": 0},
+        "traffic_light_count": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"scene_type": {"const": "intersection"}}},
+      "then": {
+        "properties": {
+          "actor_hypotheses": {
+            "items": {
+              "properties": {
+                "actor_type": {"enum": ["vehicle", "pedestrian", "vehicle_group"]}
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

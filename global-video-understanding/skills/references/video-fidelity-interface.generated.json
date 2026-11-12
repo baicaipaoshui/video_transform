@@ -1,0 +1,4678 @@
+{
+  "generated_from": "schemas and consumer source fingerprints; do not edit",
+  "contracts": {
+    "video_fidelity.schema.json": {
+      "sha256": "5849d309ba09383d18cf81c07f66e4e1fd3549fb4e79868b3815c229c85f6764",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "revision",
+          "source_duration_s",
+          "observations"
+        ],
+        "properties": {
+          "revision": {
+            "const": "video_fidelity.v1"
+          },
+          "source_duration_s": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "x-unit": "s",
+            "x-source": "media_probe"
+          },
+          "observations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "actor_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "frame_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "lane_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "corridor": {
+                  "enum": [
+                    "ego",
+                    "left_adjacent",
+                    "right_adjacent",
+                    "other",
+                    "unknown"
+                  ]
+                },
+                "junction_state": {
+                  "enum": [
+                    "before",
+                    "inside",
+                    "after",
+                    "not_applicable",
+                    "unknown"
+                  ]
+                },
+                "motion_state": {
+                  "enum": [
+                    "moving",
+                    "accelerating",
+                    "decelerating",
+                    "stopped",
+                    "unknown"
+                  ]
+                },
+                "ego_lane_ahead": {
+                  "enum": [
+                    "clear",
+                    "occupied",
+                    "unknown",
+                    "not_applicable"
+                  ],
+                  "description": "Occupancy of the visible ego-lane corridor at this frame, always relative to ego regardless of the observation row actor_id. Occlusion is unknown, not clear."
+                },
+                "ahead_actor_ids": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Existing actor IDs visible ahead of ego in the ego lane at this frame, independent of the observation row actor_id. A lead vehicle may list itself; ego may never be listed. This is not the set of actors ahead of the row actor."
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "actor_id",
+                "frame_id",
+                "lane_id",
+                "corridor",
+                "junction_state",
+                "motion_state",
+                "ego_lane_ahead",
+                "ahead_actor_ids",
+                "reason"
+              ]
+            }
+          }
+        },
+        "$defs": {
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "video_fidelity_policy": {
+                "const": "video_fidelity.v1"
+              },
+              "parked_scenery_per_side": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 6
+              },
+              "parent_case_id": {
+                "type": "string",
+                "pattern": "^case_[A-Za-z0-9_]+$"
+              }
+            },
+            "required": [
+              "video_fidelity_policy"
+            ]
+          },
+          "longitudinal_event_type": {
+            "enum": [
+              "accelerate",
+              "decelerate",
+              "stop",
+              "speed_change",
+              "ego_acceleration",
+              "ego_deceleration",
+              "ego_stop"
+            ]
+          }
+        }
+      }
+    },
+    "world_context.schema.json": {
+      "sha256": "12d8d6dae989bb0979053a561935cedb5d0a1a16d582f697b43b90c89224fabb",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$defs": {
+          "junction_membership": {
+            "type": "object",
+            "additionalProperties": true,
+            "required": [
+              "road_id"
+            ],
+            "x-adapter-version": "world-junction-membership.v1",
+            "x-legacy-string-field": "road_id",
+            "properties": {
+              "road_id": {
+                "type": "string",
+                "pattern": "^road_[0-9]{3}$"
+              },
+              "lane_ids": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "pattern": "^lane_[0-9]{3}$"
+                },
+                "description": "Observed directional lane members only. Omit or use null when unknown; an empty array declares no members. Never infer all road lanes from road_id alone."
+              }
+            }
+          },
+          "lane_connection": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Canonical observed lane connection. The four road/lane references are mandatory. maneuver remains optional only for already accepted legacy observations; new World candidates are instructed to provide it.",
+            "required": [
+              "incoming_road_id",
+              "incoming_lane_id",
+              "outgoing_road_id",
+              "outgoing_lane_id"
+            ],
+            "properties": {
+              "incoming_road_id": {
+                "type": "string",
+                "pattern": "^road_[0-9]{3}$"
+              },
+              "incoming_lane_id": {
+                "type": "string",
+                "pattern": "^lane_[0-9]{3}$"
+              },
+              "outgoing_road_id": {
+                "type": "string",
+                "pattern": "^road_[0-9]{3}$"
+              },
+              "outgoing_lane_id": {
+                "type": "string",
+                "pattern": "^lane_[0-9]{3}$"
+              },
+              "maneuver": {
+                "enum": [
+                  "straight",
+                  "left",
+                  "right",
+                  "u_turn"
+                ]
+              },
+              "evidence_frame_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "actor_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "evidence": {
+                "type": "string",
+                "minLength": 1
+              },
+              "observed_by": {
+                "type": "string",
+                "minLength": 1
+              },
+              "note": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "junction": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "incoming_roads": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "$ref": "#/$defs/junction_membership"
+                }
+              },
+              "outgoing_roads": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "$ref": "#/$defs/junction_membership"
+                }
+              },
+              "lane_connections": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "$ref": "#/$defs/lane_connection"
+                }
+              }
+            }
+          },
+          "identity_binding": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "actor_ids",
+              "evidence_frame_ids"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "unknown",
+                  "physically_separated_opposing"
+                ]
+              },
+              "actor_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "evidence_frame_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "world_paths": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^world\\."
+            }
+          },
+          "observed_window": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "time_range_s",
+              "lane_count_stable",
+              "boundary_continuity",
+              "no_merge_or_diverge",
+              "no_junction_entry"
+            ],
+            "properties": {
+              "time_range_s": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "type": "number"
+                }
+              },
+              "lane_count_stable": {
+                "type": "boolean"
+              },
+              "boundary_continuity": {
+                "type": "boolean"
+              },
+              "no_merge_or_diverge": {
+                "type": "boolean"
+              },
+              "no_junction_entry": {
+                "type": "boolean"
+              }
+            }
+          },
+          "evidence": {
+            "type": "object",
+            "additionalProperties": true,
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "observed",
+                  "estimated",
+                  "unknown"
+                ]
+              },
+              "frame_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "time_s": {
+                "type": "number",
+                "minimum": 0
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "status": {
+                      "const": "observed"
+                    }
+                  }
+                },
+                "then": {
+                  "anyOf": [
+                    {
+                      "required": [
+                        "frame_id"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "time_s"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "status": {
+                      "const": "estimated"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "confidence"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "status": {
+                      "const": "unknown"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "reason"
+                  ]
+                }
+              }
+            ]
+          },
+          "question": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "question_id",
+              "question",
+              "impact_domains",
+              "resolution",
+              "evidence"
+            ],
+            "properties": {
+              "question_id": {
+                "pattern": "^question_[0-9]{3,}$"
+              },
+              "actor_ids": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "identity_binding": {
+                "$ref": "#/$defs/identity_binding"
+              },
+              "localization": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "road_id",
+                  "area_id",
+                  "attribute",
+                  "evidence_frame_ids"
+                ],
+                "properties": {
+                  "road_id": {
+                    "type": "string"
+                  },
+                  "area_id": {
+                    "type": "string"
+                  },
+                  "attribute": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "temporal_scope": {
+                    "const": "after_observed_window"
+                  },
+                  "observed_window": {
+                    "$ref": "#/$defs/observed_window"
+                  },
+                  "affected_x_range_m": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "evidence_frame_ids": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "observed_corridor": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "time_range_s",
+                      "x_range_m",
+                      "lane_continuity",
+                      "boundary_continuity",
+                      "no_merge_or_diverge",
+                      "no_intrusion"
+                    ],
+                    "properties": {
+                      "time_range_s": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": {
+                          "type": "number"
+                        }
+                      },
+                      "x_range_m": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": {
+                          "type": "number"
+                        }
+                      },
+                      "lane_continuity": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "boundary_continuity": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "no_merge_or_diverge": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "no_intrusion": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "world_paths": {
+                "$ref": "#/$defs/world_paths"
+              },
+              "related_world_paths": {
+                "$ref": "#/$defs/world_paths"
+              },
+              "question": {
+                "type": "string",
+                "minLength": 1
+              },
+              "impact_domains": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "x-adapter-version": "world-impact-aliases.v1",
+                "x-legacy-value-aliases": {
+                  "actor_state": "executor_primitive",
+                  "actor_motion": "executor_primitive"
+                },
+                "items": {
+                  "enum": [
+                    "road_topology",
+                    "lane_count",
+                    "actor_set",
+                    "actor_identity",
+                    "actor_lane",
+                    "event_type",
+                    "event_order",
+                    "executor_primitive",
+                    "appearance",
+                    "report"
+                  ]
+                }
+              },
+              "resolution": {
+                "enum": [
+                  "unresolved",
+                  "resolved",
+                  "non_core"
+                ]
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/evidence"
+                }
+              }
+            }
+          }
+        },
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "contract_version",
+          "evidence_epoch",
+          "world",
+          "actor_hypotheses",
+          "questions_to_verify",
+          "ambiguities",
+          "critical_intervals",
+          "field_evidence"
+        ],
+        "properties": {
+          "contract_version": {
+            "const": "video-case-world-behavior"
+          },
+          "evidence_epoch": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "world": {
+            "type": "object",
+            "additionalProperties": true,
+            "required": [
+              "scene_type",
+              "environment",
+              "road"
+            ],
+            "properties": {
+              "scene_type": {
+                "enum": [
+                  "highway",
+                  "intersection"
+                ]
+              },
+              "environment": {
+                "type": "object"
+              },
+              "road": {
+                "type": "object",
+                "properties": {
+                  "ego_direction_lanes": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "travel_lane_count": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Legacy total travel-lane summary; not an alias for ego_direction_lanes."
+                  },
+                  "lane_count_ego_direction": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Legacy exact alias of ego_direction_lanes."
+                  },
+                  "one_way": {
+                    "type": "boolean"
+                  },
+                  "opposite_direction_lanes": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "description": "Exact opposing travel-lane count, or null only when a bound unresolved World item and unknown field evidence preserve the unobservable count."
+                  },
+                  "parking_lanes": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                      "enum": [
+                        "left",
+                        "right"
+                      ]
+                    }
+                  },
+                  "roads": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "road_id",
+                        "lane_ids"
+                      ],
+                      "properties": {
+                        "road_id": {
+                          "type": "string",
+                          "pattern": "^road_[0-9]{3}$"
+                        },
+                        "lane_ids": {
+                          "type": "array",
+                          "description": "Identified lane IDs; an empty observation list does not assert zero physical lanes.",
+                          "items": {
+                            "pattern": "^lane_[0-9]{3}$"
+                          }
+                        },
+                        "lane_knowledge": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "kind",
+                            "count",
+                            "anchors",
+                            "evidence_frame_ids"
+                          ],
+                          "properties": {
+                            "kind": {
+                              "enum": [
+                                "exact",
+                                "minimum",
+                                "unknown"
+                              ]
+                            },
+                            "count": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ],
+                              "minimum": 1
+                            },
+                            "anchors": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "additionalProperties": false,
+                                "required": [
+                                  "lane_id",
+                                  "ordinal_from_right",
+                                  "evidence_frame_ids"
+                                ],
+                                "properties": {
+                                  "lane_id": {
+                                    "type": "string"
+                                  },
+                                  "ordinal_from_right": {
+                                    "type": "integer",
+                                    "minimum": 0
+                                  },
+                                  "evidence_frame_ids": {
+                                    "type": "array",
+                                    "minItems": 1,
+                                    "uniqueItems": true,
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "evidence_frame_ids": {
+                              "type": "array",
+                              "minItems": 1,
+                              "uniqueItems": true,
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "allOf": [
+                            {
+                              "if": {
+                                "properties": {
+                                  "kind": {
+                                    "enum": [
+                                      "exact",
+                                      "minimum"
+                                    ]
+                                  }
+                                }
+                              },
+                              "then": {
+                                "properties": {
+                                  "count": {
+                                    "type": "integer"
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "heading_rad": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "road_role": {
+                          "description": "Known physical arm role, or null/omitted when unknown. Directional membership must remain consistent; never copy incoming lane IDs to invent outgoing lanes.",
+                          "anyOf": [
+                            {
+                              "enum": [
+                                "incoming",
+                                "outgoing",
+                                "bidirectional",
+                                null
+                              ]
+                            },
+                            {
+                              "type": "array",
+                              "minItems": 1,
+                              "uniqueItems": true,
+                              "items": {
+                                "enum": [
+                                  "incoming",
+                                  "outgoing"
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        "road_geometry": {
+                          "type": "object",
+                          "properties": {
+                            "opposing_separation": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "physically_separated",
+                                "side"
+                              ],
+                              "properties": {
+                                "physically_separated": {
+                                  "type": [
+                                    "boolean",
+                                    "null"
+                                  ]
+                                },
+                                "side": {
+                                  "enum": [
+                                    "left",
+                                    "right",
+                                    "unknown"
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "lanes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "lane_id"
+                      ],
+                      "properties": {
+                        "lane_id": {
+                          "type": "string",
+                          "pattern": "^lane_[0-9]{3}$"
+                        },
+                        "road_id": {
+                          "type": "string",
+                          "pattern": "^road_[0-9]{3}$"
+                        }
+                      }
+                    }
+                  },
+                  "lane_markings": {
+                    "type": "array",
+                    "description": "Observed lane-boundary markings. Use an empty array only when the evidence supports that no marking is visible.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "marking_id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "marking_type": {},
+                        "type": {},
+                        "between": {
+                          "type": "array",
+                          "minItems": 2,
+                          "maxItems": 2,
+                          "uniqueItems": true,
+                          "items": {
+                            "pattern": "^lane_[0-9]{3}$"
+                          }
+                        },
+                        "side": {
+                          "enum": [
+                            "left",
+                            "right"
+                          ]
+                        },
+                        "lane_id": {
+                          "pattern": "^lane_[0-9]{3}$"
+                        },
+                        "road_id": {
+                          "pattern": "^road_[0-9]{3}$"
+                        },
+                        "location": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "allOf": [
+                        {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "type"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "marking_type"
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "marking_id"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "between"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "side"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "location"
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "additionalProperties": true
+                    }
+                  },
+                  "roadside_areas": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "allOf": [
+                  {
+                    "if": {
+                      "anyOf": [
+                        {
+                          "required": [
+                            "roads"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "lanes"
+                          ]
+                        }
+                      ]
+                    },
+                    "then": {
+                      "required": [
+                        "roads",
+                        "lanes",
+                        "lane_markings"
+                      ]
+                    }
+                  }
+                ]
+              },
+              "junctions": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/junction"
+                }
+              }
+            }
+          },
+          "actor_hypotheses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "actor_id",
+                "actor_type",
+                "first_seen_frame_id",
+                "identity_description"
+              ],
+              "additionalProperties": true,
+              "properties": {
+                "actor_id": {
+                  "$ref": "actor_fields.schema.json#/$defs/actor_id"
+                },
+                "actor_type": {
+                  "$ref": "actor_fields.schema.json#/$defs/actor_type"
+                },
+                "vehicle_class": {
+                  "$ref": "actor_fields.schema.json#/$defs/vehicle_class"
+                },
+                "identity_description": {
+                  "$ref": "actor_fields.schema.json#/$defs/identity_description"
+                },
+                "first_seen_frame_id": {
+                  "$ref": "actor_fields.schema.json#/$defs/first_seen_frame_id"
+                },
+                "hypothesized_lane": {
+                  "$ref": "actor_fields.schema.json#/$defs/lane_reference"
+                }
+              }
+            }
+          },
+          "questions_to_verify": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/question"
+            }
+          },
+          "ambiguities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "ambiguity_id",
+                "impact_domains",
+                "resolution"
+              ],
+              "properties": {
+                "localization": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "road_id",
+                    "area_id",
+                    "attribute",
+                    "evidence_frame_ids"
+                  ],
+                  "properties": {
+                    "road_id": {
+                      "type": "string"
+                    },
+                    "area_id": {
+                      "type": "string"
+                    },
+                    "attribute": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "temporal_scope": {
+                      "const": "after_observed_window"
+                    },
+                    "observed_window": {
+                      "$ref": "#/$defs/observed_window"
+                    },
+                    "affected_x_range_m": {
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 2,
+                      "items": {
+                        "type": "number"
+                      }
+                    },
+                    "evidence_frame_ids": {
+                      "type": "array",
+                      "minItems": 1,
+                      "uniqueItems": true,
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "observed_corridor": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "time_range_s",
+                        "x_range_m",
+                        "lane_continuity",
+                        "boundary_continuity",
+                        "no_merge_or_diverge",
+                        "no_intrusion"
+                      ],
+                      "properties": {
+                        "time_range_s": {
+                          "type": "array",
+                          "minItems": 2,
+                          "maxItems": 2,
+                          "items": {
+                            "type": "number"
+                          }
+                        },
+                        "x_range_m": {
+                          "type": "array",
+                          "minItems": 2,
+                          "maxItems": 2,
+                          "items": {
+                            "type": "number"
+                          }
+                        },
+                        "lane_continuity": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ]
+                        },
+                        "boundary_continuity": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ]
+                        },
+                        "no_merge_or_diverge": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ]
+                        },
+                        "no_intrusion": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "world_paths": {
+                  "$ref": "#/$defs/world_paths"
+                },
+                "identity_binding": {
+                  "$ref": "#/$defs/identity_binding"
+                },
+                "impact_domains": {
+                  "$ref": "#/$defs/question/properties/impact_domains"
+                },
+                "resolution": {
+                  "$ref": "#/$defs/question/properties/resolution"
+                },
+                "related_world_paths": {
+                  "$ref": "#/$defs/world_paths"
+                },
+                "owner": {
+                  "enum": [
+                    "world",
+                    "behavior"
+                  ]
+                },
+                "subject_field": {
+                  "enum": [
+                    "road_topology",
+                    "lane_count",
+                    "actor_set",
+                    "actor_identity",
+                    "actor_lane",
+                    "actor_state",
+                    "actor_motion",
+                    "event_type",
+                    "event_order",
+                    "executor_primitive",
+                    "appearance",
+                    "report"
+                  ]
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "critical_intervals": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "start_s",
+                "end_s"
+              ],
+              "properties": {
+                "start_s": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "end_s": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "question_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "ambiguity_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "field_evidence": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/evidence"
+              }
+            }
+          }
+        }
+      }
+    },
+    "batch_v3.schema.json": {
+      "sha256": "4c4cd91ab94aa9676559fdd8c621bc64987613a98542c463055fadf5635a83f0",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$defs": {
+          "evidence": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "status": {
+                "enum": [
+                  "observed",
+                  "estimated",
+                  "unknown"
+                ]
+              },
+              "frame_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "time_s": {
+                "type": "number",
+                "minimum": 0
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "status": {
+                      "const": "observed"
+                    }
+                  }
+                },
+                "then": {
+                  "anyOf": [
+                    {
+                      "required": [
+                        "frame_id"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "time_s"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "status": {
+                      "const": "estimated"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "confidence"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "status": {
+                      "const": "unknown"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "reason"
+                  ]
+                }
+              }
+            ]
+          },
+          "observation": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "answer_resolution": {
+                "enum": [
+                  "confirmed",
+                  "needs_world_patch",
+                  "partial",
+                  "unknown"
+                ]
+              },
+              "conflict_ids": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "status": {
+                "enum": [
+                  "observed",
+                  "estimated",
+                  "unknown"
+                ]
+              },
+              "frame_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "time_s": {
+                "type": "number",
+                "minimum": 0
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/evidence"
+                }
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "status": {
+                      "const": "observed"
+                    }
+                  }
+                },
+                "then": {
+                  "anyOf": [
+                    {
+                      "required": [
+                        "frame_id"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "time_s"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "evidence"
+                      ],
+                      "properties": {
+                        "evidence": {
+                          "minItems": 1,
+                          "contains": {
+                            "allOf": [
+                              {
+                                "$ref": "#/$defs/evidence"
+                              },
+                              {
+                                "properties": {
+                                  "status": {
+                                    "const": "observed"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "status": {
+                      "const": "estimated"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "confidence"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "status": {
+                      "const": "unknown"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "reason"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "contract_version",
+          "case_id",
+          "batch_id",
+          "session_id",
+          "world_evidence_epoch",
+          "answered_question_ids",
+          "observations",
+          "semantic_conflicts",
+          "registry_after"
+        ],
+        "properties": {
+          "contract_version": {
+            "const": "video-case-world-behavior"
+          },
+          "case_id": {
+            "pattern": "^case_(?:[0-9a-f]{16}|[0-9]{8}T[0-9]{9}Z_[0-9a-f]{8})$"
+          },
+          "batch_id": {
+            "pattern": "^batch_[0-9]{4}$"
+          },
+          "session_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "world_evidence_epoch": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "answered_question_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "pattern": "^question_[0-9]{3,}$"
+            }
+          },
+          "answered_ambiguity_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "pattern": "^(?:ambiguity|amb)_[0-9]{3,}$"
+            }
+          },
+          "vehicle_census": {
+            "$ref": "vehicle_census.schema.json"
+          },
+          "observations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/observation"
+            }
+          },
+          "semantic_conflicts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "conflict_id",
+                "world_path",
+                "proposed_value",
+                "evidence",
+                "impact_domains"
+              ],
+              "properties": {
+                "conflict_id": {
+                  "pattern": "^conflict_[A-Za-z0-9_-]+$"
+                },
+                "world_path": {
+                  "type": "string",
+                  "pattern": "^world\\."
+                },
+                "proposed_value": {},
+                "evidence": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "$ref": "#/$defs/evidence"
+                  }
+                },
+                "impact_domains": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "registry_after": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "actor_id",
+                "actor_type",
+                "first_seen_frame_id",
+                "identity_description"
+              ],
+              "additionalProperties": true,
+              "properties": {
+                "actor_id": {
+                  "$ref": "actor_fields.schema.json#/$defs/actor_id"
+                },
+                "actor_type": {
+                  "$ref": "actor_fields.schema.json#/$defs/actor_type"
+                },
+                "vehicle_class": {
+                  "$ref": "actor_fields.schema.json#/$defs/vehicle_class"
+                },
+                "identity_description": {
+                  "$ref": "actor_fields.schema.json#/$defs/identity_description"
+                },
+                "first_seen_frame_id": {
+                  "$ref": "actor_fields.schema.json#/$defs/first_seen_frame_id"
+                },
+                "hypothesized_lane": {
+                  "$ref": "actor_fields.schema.json#/$defs/lane_reference"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "behavior.schema.json": {
+      "sha256": "f2862ba30a75425a6252caaeb113a914012952b3f428f15a74b0bf33646d106e",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "contract_version",
+          "world_evidence_epoch",
+          "actors",
+          "events",
+          "challenge_resolutions",
+          "semantic_limitations",
+          "executor_primitives"
+        ],
+        "properties": {
+          "contract_version": {
+            "const": "video-case-world-behavior"
+          },
+          "world_evidence_epoch": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "actors": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "actor_id",
+                "actor_type",
+                "identity_description",
+                "simulation_role",
+                "is_static",
+                "trajectory"
+              ],
+              "properties": {
+                "actor_id": {
+                  "$ref": "actor_fields.schema.json#/$defs/actor_id"
+                },
+                "actor_type": {
+                  "$ref": "actor_fields.schema.json#/$defs/actor_type"
+                },
+                "color": {
+                  "$ref": "actor_fields.schema.json#/$defs/color"
+                },
+                "vehicle_class": {
+                  "$ref": "actor_fields.schema.json#/$defs/vehicle_class"
+                },
+                "roadside_area_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "minLength": 1
+                },
+                "parking_side": {
+                  "enum": [
+                    "left",
+                    "right",
+                    null
+                  ]
+                },
+                "identity_description": {
+                  "$ref": "actor_fields.schema.json#/$defs/identity_description"
+                },
+                "first_seen_frame_id": {
+                  "$ref": "actor_fields.schema.json#/$defs/first_seen_frame_id"
+                },
+                "simulation_role": {
+                  "enum": [
+                    "participant",
+                    "background"
+                  ]
+                },
+                "direction_evidence": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "status",
+                    "value",
+                    "frame_ids",
+                    "reason"
+                  ],
+                  "properties": {
+                    "status": {
+                      "const": "observed"
+                    },
+                    "value": {
+                      "enum": [
+                        "same_as_ego",
+                        "opposite_to_ego"
+                      ]
+                    },
+                    "frame_ids": {
+                      "type": "array",
+                      "minItems": 1,
+                      "uniqueItems": true,
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "reason": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                "is_static": {
+                  "type": "boolean"
+                },
+                "trajectory": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "minProperties": 1,
+                    "properties": {
+                      "time_s": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "timestamp_s": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "frame_id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "object_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Optional independently established physical object identity, stable across frames; not a per-frame detection ID. Conflicting values under one actor_id are fatal."
+                      },
+                      "lane_id": {
+                        "$ref": "actor_fields.schema.json#/$defs/lane_reference"
+                      },
+                      "road_id": {
+                        "$ref": "actor_fields.schema.json#/$defs/road_reference",
+                        "description": "Optional World road reference for this sample; must own lane_id when both are known. Null is permitted inside a junction or when the road is unknown."
+                      },
+                      "ordinal_from_right": {
+                        "$ref": "actor_fields.schema.json#/$defs/ordinal_from_right",
+                        "description": "Optional road-local position, zero-based from the outer-right boundary in that road's travel direction; not the numeric suffix of the global lane_id."
+                      },
+                      "position_ego_m": {
+                        "type": "object",
+                        "properties": {
+                          "x": {
+                            "type": "number"
+                          },
+                          "y": {
+                            "type": "number"
+                          },
+                          "z": {
+                            "type": "number"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "speed_mps": {
+                        "oneOf": [
+                          {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          {
+                            "type": "object",
+                            "required": [
+                              "status",
+                              "value"
+                            ],
+                            "properties": {
+                              "status": {
+                                "enum": [
+                                  "observed",
+                                  "estimated",
+                                  "policy_default",
+                                  "placeholder",
+                                  "unknown"
+                                ]
+                              },
+                              "value": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ],
+                                "minimum": 0
+                              },
+                              "confidence": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": true
+                          }
+                        ]
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "execution_scope_evidence": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "kind",
+                    "checked_frame_ids",
+                    "visible_frame_ids",
+                    "no_interaction",
+                    "reason"
+                  ],
+                  "properties": {
+                    "kind": {
+                      "enum": [
+                        "edge_fragment",
+                        "distant_transient",
+                        "execution_relevant"
+                      ]
+                    },
+                    "checked_frame_ids": {
+                      "type": "array",
+                      "minItems": 1,
+                      "uniqueItems": true,
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "visible_frame_ids": {
+                      "type": "array",
+                      "minItems": 1,
+                      "uniqueItems": true,
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "no_interaction": {
+                      "type": "boolean"
+                    },
+                    "reason": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "event_id",
+                "event_type",
+                "involved_actor_ids",
+                "evidence"
+              ],
+              "properties": {
+                "event_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "event_type": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "involved_actor_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                },
+                "evidence": {
+                  "type": "array"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "challenge_resolutions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "challenge_id",
+                "resolution"
+              ],
+              "properties": {
+                "challenge_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "resolution": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "execution_effect": {
+                  "enum": [
+                    "apply_event",
+                    "retain_actor_state",
+                    "exclude_unconfirmed_event"
+                  ]
+                },
+                "decision": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "rationale": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "consistency": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "evidence_frame_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "semantic_limitations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "limitation_id",
+                "description",
+                "impact_domains"
+              ],
+              "properties": {
+                "limitation_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "limitation_kind": {
+                  "enum": [
+                    "absolute_scale",
+                    "other"
+                  ]
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "impact_domains": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                },
+                "execution_effect": {
+                  "enum": [
+                    "bounded_uncertainty",
+                    "blocks_execution"
+                  ]
+                },
+                "scope_binding": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "kind",
+                    "world_paths",
+                    "representation",
+                    "affected_event_ids"
+                  ],
+                  "properties": {
+                    "kind": {
+                      "const": "physically_separated_opposing_observations"
+                    },
+                    "world_paths": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 1,
+                      "uniqueItems": true,
+                      "items": {
+                        "const": "world.road.opposite_direction_lanes"
+                      }
+                    },
+                    "representation": {
+                      "const": "observation_only"
+                    },
+                    "affected_event_ids": {
+                      "type": "array",
+                      "maxItems": 0
+                    }
+                  }
+                },
+                "census_issue_ids": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "executor_primitives": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "primitive_id",
+                "actor_id",
+                "type"
+              ],
+              "properties": {
+                "primitive_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "actor_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "type": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "lane_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "position_ego_m": {
+                  "type": "object",
+                  "required": [
+                    "x",
+                    "y"
+                  ],
+                  "properties": {
+                    "x": {
+                      "type": "number"
+                    },
+                    "y": {
+                      "type": "number"
+                    },
+                    "z": {
+                      "type": "number"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "speed_kmh": {
+                  "oneOf": [
+                    {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "status",
+                        "value"
+                      ],
+                      "properties": {
+                        "status": {
+                          "enum": [
+                            "observed",
+                            "estimated",
+                            "policy_default"
+                          ]
+                        },
+                        "value": {
+                          "type": "number",
+                          "minimum": 0
+                        },
+                        "confidence": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        },
+                        "reason": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  ]
+                }
+              },
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "type": {
+                        "const": "initial_state"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ]
+                  },
+                  "then": {
+                    "required": [
+                      "lane_id",
+                      "position_ego_m",
+                      "speed_kmh"
+                    ]
+                  }
+                }
+              ],
+              "additionalProperties": true
+            }
+          },
+          "video_fidelity": {
+            "$ref": "video_fidelity.schema.json"
+          }
+        },
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "world"
+              ]
+            },
+            {
+              "required": [
+                "road"
+              ]
+            },
+            {
+              "required": [
+                "roads"
+              ]
+            },
+            {
+              "required": [
+                "lanes"
+              ]
+            },
+            {
+              "required": [
+                "junctions"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "intersection_review.schema.json": {
+      "sha256": "ba85cebe2686d4fb70064a3bbc7f63fef34bd1bbcee02692844ce40a429fb00b",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path_contract_revision": {
+            "const": "intersection_path.v1"
+          },
+          "evidence_catalog_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "longitudinal_events": {
+            "$ref": "longitudinal_motion.schema.json"
+          },
+          "input_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "status": {
+            "enum": [
+              "accepted",
+              "needs_evidence"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "single_four_way": {
+            "type": "boolean"
+          },
+          "straight_only": {
+            "type": "boolean"
+          },
+          "arms": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "S": {
+                "type": "string",
+                "minLength": 1
+              },
+              "N": {
+                "type": "string",
+                "minLength": 1
+              },
+              "W": {
+                "type": "string",
+                "minLength": 1
+              },
+              "E": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "S",
+              "N",
+              "W",
+              "E"
+            ]
+          },
+          "actors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "actor_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "execution": {
+                  "enum": [
+                    "include",
+                    "exclude"
+                  ]
+                },
+                "incoming_lane_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "outgoing_lane_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "non_interacting": {
+                  "type": "boolean"
+                },
+                "evidence_frame_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                },
+                "context_frame_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                },
+                "path_evidence_frame_ids": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 12,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                },
+                "entry_ordinal_from_right": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 0
+                },
+                "exit_ordinal_from_right": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 0
+                },
+                "lateral_motion": {
+                  "enum": [
+                    "keeping",
+                    "changing_left",
+                    "changing_right",
+                    "unknown"
+                  ]
+                },
+                "lateral_transition_interval_s": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "path_witnesses": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "incoming",
+                    "junction",
+                    "outgoing"
+                  ],
+                  "properties": {
+                    "incoming": {
+                      "type": "array",
+                      "minItems": 1,
+                      "uniqueItems": true,
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "junction": {
+                      "type": "array",
+                      "minItems": 1,
+                      "uniqueItems": true,
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "outgoing": {
+                      "type": "array",
+                      "minItems": 1,
+                      "uniqueItems": true,
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "actor_id",
+                "execution",
+                "incoming_lane_id",
+                "outgoing_lane_id",
+                "non_interacting",
+                "evidence_frame_ids",
+                "reason"
+              ]
+            }
+          },
+          "orders": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "behind": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "ahead": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "trend": {
+                  "enum": [
+                    "steady",
+                    "receding",
+                    "approaching",
+                    "unknown"
+                  ]
+                },
+                "evidence_frame_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "behind",
+                "ahead",
+                "trend",
+                "evidence_frame_ids",
+                "reason"
+              ]
+            }
+          },
+          "parking": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "area_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "road_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "side": {
+                  "enum": [
+                    "left",
+                    "right"
+                  ]
+                },
+                "evidence_frame_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "area_id",
+                "road_id",
+                "side",
+                "evidence_frame_ids",
+                "reason"
+              ]
+            }
+          },
+          "crosswalks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "crosswalk_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "road_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "evidence_frame_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "ego_relation_at_start": {
+                  "enum": [
+                    "ahead",
+                    "behind",
+                    "not_on_ego_path",
+                    "unknown"
+                  ]
+                },
+                "ego_crossing_interval_s": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              },
+              "required": [
+                "crosswalk_id",
+                "road_id",
+                "evidence_frame_ids",
+                "reason"
+              ]
+            }
+          },
+          "signals": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "signal_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "road_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "state": {
+                  "enum": [
+                    "red",
+                    "yellow",
+                    "green",
+                    "unknown"
+                  ]
+                },
+                "control": {
+                  "enum": [
+                    "ego",
+                    "conflicting",
+                    "unknown"
+                  ]
+                },
+                "evidence_frame_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "signal_id",
+                "road_id",
+                "state",
+                "control",
+                "evidence_frame_ids",
+                "reason"
+              ]
+            }
+          },
+          "covered_world_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "covered_limitation_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "exit_lane_continuity": {
+            "description": "For requests frozen with fact_contract_revision=observation-execution.v1, accepted reviews require same_order; validation is request-bound. Old requests retain their existing contract.",
+            "enum": [
+              "same_order",
+              "unknown"
+            ]
+          },
+          "world_challenges": {
+            "type": "array",
+            "maxItems": 16,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "challenge_id",
+                "world_paths",
+                "actor_ids",
+                "evidence_frame_ids",
+                "finding",
+                "reason"
+              ],
+              "properties": {
+                "challenge_id": {
+                  "type": "string",
+                  "pattern": "^world_challenge_[0-9]{3}$"
+                },
+                "world_paths": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 8,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "pattern": "^(world|actor_hypotheses|questions_to_verify|ambiguities|field_evidence)(\\.|\\[)"
+                  }
+                },
+                "actor_ids": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "evidence_frame_ids": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 12,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "finding": {
+                  "enum": [
+                    "contradicted",
+                    "unsupported",
+                    "missing"
+                  ]
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "planning_revision": {
+            "const": "ego_scene_approximation.v1"
+          },
+          "lane_knowledge": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "count",
+                "anchors",
+                "evidence_frame_ids"
+              ],
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "exact",
+                    "minimum",
+                    "unknown"
+                  ]
+                },
+                "count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 1
+                },
+                "anchors": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "lane_id",
+                      "ordinal_from_right",
+                      "evidence_frame_ids"
+                    ],
+                    "properties": {
+                      "lane_id": {
+                        "type": "string"
+                      },
+                      "ordinal_from_right": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "evidence_frame_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "evidence_frame_ids": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "exact",
+                          "minimum"
+                        ]
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "count": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "limitation_bindings": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "limitation_binding.schema.json"
+            }
+          },
+          "dependency_bindings": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "road_id",
+                "evidence_frame_ids",
+                "side"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "unused_roadside_side"
+                },
+                "road_id": {
+                  "type": "string"
+                },
+                "evidence_frame_ids": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "side": {
+                  "enum": [
+                    "left",
+                    "right"
+                  ]
+                }
+              }
+            }
+          },
+          "execution_entry_time_s": {
+            "type": "number",
+            "minimum": 0
+          },
+          "video_fidelity": {
+            "$ref": "video_fidelity.schema.json"
+          }
+        },
+        "required": [
+          "input_sha256",
+          "status",
+          "reason",
+          "single_four_way",
+          "straight_only",
+          "arms",
+          "actors",
+          "orders",
+          "parking",
+          "crosswalks",
+          "signals",
+          "covered_world_ids",
+          "covered_limitation_ids"
+        ]
+      }
+    },
+    "analysis.schema.json": {
+      "sha256": "89c2f0e2798db221480bf047d93cb7e137d1bc1167de2220e844a6f07f7455f2",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$defs": {
+          "evidence": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "not": {
+              "required": [
+                "kind"
+              ]
+            },
+            "properties": {
+              "status": {
+                "enum": [
+                  "observed",
+                  "estimated",
+                  "unknown"
+                ]
+              },
+              "frame_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "time_s": {
+                "type": "number",
+                "minimum": 0
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "status": {
+                      "const": "observed"
+                    }
+                  }
+                },
+                "then": {
+                  "anyOf": [
+                    {
+                      "required": [
+                        "frame_id"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "time_s"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "status": {
+                      "const": "estimated"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "confidence"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "status": {
+                      "const": "unknown"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "reason"
+                  ]
+                }
+              }
+            ],
+            "additionalProperties": true
+          },
+          "road": {
+            "type": "object",
+            "required": [
+              "road_id",
+              "lane_ids"
+            ],
+            "properties": {
+              "road_id": {
+                "pattern": "^road_[0-9]{3}$"
+              },
+              "lane_ids": {
+                "type": "array",
+                "description": "Identified lane IDs; pending Converter projection may retain an empty observation list.",
+                "uniqueItems": true,
+                "items": {
+                  "pattern": "^lane_[0-9]{3}$"
+                }
+              }
+            },
+            "additionalProperties": true
+          },
+          "lane": {
+            "type": "object",
+            "required": [
+              "lane_id"
+            ],
+            "properties": {
+              "lane_id": {
+                "pattern": "^lane_[0-9]{3}$"
+              },
+              "width_m": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/positive_width"
+                  },
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "value",
+                      "status"
+                    ],
+                    "properties": {
+                      "value": {
+                        "type": "null"
+                      },
+                      "status": {
+                        "const": "unknown"
+                      }
+                    },
+                    "additionalProperties": true
+                  },
+                  {
+                    "const": "unknown"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": true
+          },
+          "actor": {
+            "type": "object",
+            "required": [
+              "actor_id",
+              "actor_type",
+              "identity_description",
+              "trajectory"
+            ],
+            "properties": {
+              "actor_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "actor_type": {
+                "$ref": "actor_fields.schema.json#/$defs/actor_type"
+              },
+              "color": {
+                "$ref": "actor_fields.schema.json#/$defs/color"
+              },
+              "identity_description": {
+                "type": "string",
+                "minLength": 1
+              },
+              "trajectory": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object"
+                }
+              },
+              "vehicle_class": {
+                "$ref": "actor_fields.schema.json#/$defs/vehicle_class"
+              }
+            },
+            "additionalProperties": true
+          },
+          "event": {
+            "type": "object",
+            "required": [
+              "event_id",
+              "involved_actor_ids",
+              "evidence"
+            ],
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "involved_actor_ids": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "evidence": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/$defs/evidence"
+                }
+              }
+            },
+            "additionalProperties": true
+          },
+          "lane_marking": {
+            "type": "object",
+            "properties": {
+              "marking_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "marking_type": {},
+              "type": {},
+              "between": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "uniqueItems": true,
+                "items": {
+                  "pattern": "^lane_[0-9]{3}$"
+                }
+              },
+              "side": {
+                "enum": [
+                  "left",
+                  "right"
+                ]
+              },
+              "lane_id": {
+                "pattern": "^lane_[0-9]{3}$"
+              },
+              "road_id": {
+                "pattern": "^road_[0-9]{3}$"
+              },
+              "location": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "required": [
+                      "type"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "marking_type"
+                    ]
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "required": [
+                      "marking_id"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "between"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "side"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "location"
+                    ]
+                  }
+                ]
+              }
+            ],
+            "additionalProperties": true
+          },
+          "positive_width": {
+            "oneOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "object",
+                "required": [
+                  "value"
+                ],
+                "properties": {
+                  "value": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "additionalProperties": true
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scene_type",
+          "road",
+          "ego",
+          "actors",
+          "events",
+          "quality_report"
+        ],
+        "properties": {
+          "scene_type": {
+            "enum": [
+              "highway",
+              "intersection"
+            ]
+          },
+          "road": {
+            "type": "object",
+            "required": [
+              "roads",
+              "lanes",
+              "lane_markings"
+            ],
+            "properties": {
+              "roads": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/$defs/road"
+                }
+              },
+              "lanes": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/$defs/lane"
+                }
+              },
+              "lane_markings": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/lane_marking"
+                }
+              },
+              "traffic_direction": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lane_count_opposite_direction": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              }
+            },
+            "additionalProperties": true
+          },
+          "ego": {
+            "type": "object",
+            "required": [
+              "actor_id",
+              "trajectory"
+            ],
+            "properties": {
+              "actor_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "trajectory": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object"
+                }
+              }
+            },
+            "additionalProperties": true
+          },
+          "actors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/actor"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/event"
+            }
+          },
+          "quality_report": {
+            "type": "object"
+          },
+          "junctions": {
+            "type": "array"
+          },
+          "environment": {
+            "type": "object"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "interactions": {
+            "type": "array"
+          },
+          "simulation_scenarios": {
+            "type": "array"
+          },
+          "limitations": {
+            "type": "array"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "quality_report"
+              ],
+              "properties": {
+                "quality_report": {
+                  "required": [
+                    "execution_ready",
+                    "execution_projection"
+                  ],
+                  "properties": {
+                    "execution_ready": {
+                      "const": false
+                    },
+                    "execution_projection": {
+                      "const": "analysis_values_then_hardcoded_fallbacks"
+                    }
+                  }
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "road": {
+                  "properties": {
+                    "roads": {
+                      "items": {
+                        "properties": {
+                          "lane_ids": {
+                            "minItems": 1
+                          }
+                        }
+                      }
+                    },
+                    "lanes": {
+                      "items": {
+                        "required": [
+                          "width_m"
+                        ],
+                        "properties": {
+                          "width_m": {
+                            "$ref": "#/$defs/positive_width"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "allOf": [
+                {
+                  "properties": {
+                    "scene_type": {
+                      "const": "intersection"
+                    }
+                  }
+                },
+                {
+                  "not": {
+                    "required": [
+                      "quality_report"
+                    ],
+                    "properties": {
+                      "quality_report": {
+                        "required": [
+                          "execution_ready"
+                        ],
+                        "properties": {
+                          "execution_ready": {
+                            "const": false
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "then": {
+              "required": [
+                "junctions",
+                "simulation_scenarios"
+              ],
+              "properties": {
+                "junctions": {
+                  "minItems": 1
+                },
+                "simulation_scenarios": {
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "involved_actor_ids",
+                      "initial_conditions"
+                    ],
+                    "properties": {
+                      "involved_actor_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "initial_conditions": {
+                        "type": "object",
+                        "minProperties": 1
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "world_field_repair.schema.json": {
+      "sha256": "36c219ffb06ee2cdde9d8f6115b57e6a348bf948d0dd76ba8921ff898d99c2f9",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "contract_version",
+          "base_sha256",
+          "request_sha256",
+          "operations"
+        ],
+        "properties": {
+          "contract_version": {
+            "const": "world-field-repair.v1"
+          },
+          "base_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "request_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "operations": {
+            "type": "array",
+            "maxItems": 32,
+            "items": {
+              "$ref": "#/$defs/operation"
+            }
+          },
+          "status": {
+            "enum": [
+              "patch",
+              "needs_evidence",
+              "blocked_by_patch_contract"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "status"
+              ],
+              "properties": {
+                "status": {
+                  "not": {
+                    "const": "patch"
+                  }
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "reason"
+              ],
+              "properties": {
+                "operations": {
+                  "maxItems": 0
+                }
+              }
+            }
+          }
+        ],
+        "$defs": {
+          "legacy_notes": {
+            "type": "string",
+            "maxLength": 4096,
+            "description": "world-patch-notes.v1: archive as audit text, never part of the canonical patch or World facts."
+          },
+          "operation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "op",
+              "path",
+              "value",
+              "evidence_frame_ids"
+            ],
+            "properties": {
+              "op": {
+                "enum": [
+                  "add",
+                  "replace"
+                ]
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^/"
+              },
+              "value": {},
+              "evidence_frame_ids": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "longitudinal_motion.schema.json": {
+      "sha256": "591ce6188d674f19d3cb968bfc2adf39e827bed431764858dbd46f624725b74d",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "event_id",
+            "status",
+            "evidence_frame_ids"
+          ],
+          "properties": {
+            "event_id": {
+              "type": "string"
+            },
+            "status": {
+              "enum": [
+                "confirmed",
+                "uncertain",
+                "conflicting"
+              ]
+            },
+            "evidence_frame_ids": {
+              "type": "array",
+              "minItems": 2,
+              "uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "x-event-motion-states": {
+          "vehicle_deceleration": "decelerating",
+          "ego_deceleration": "decelerating",
+          "decelerate": "decelerating",
+          "vehicle_acceleration": "accelerating",
+          "ego_acceleration": "accelerating",
+          "accelerate": "accelerating",
+          "vehicle_stop": "stopped",
+          "ego_stop": "stopped",
+          "stop": "stopped"
+        }
+      }
+    },
+    "limitation_binding.schema.json": {
+      "sha256": "d51fa70b476d59a252f160e8038497b32b47576e64287fa539b5f83fb5138c8f",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "actor_ids",
+          "road_id"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "exit_lane_assignment",
+              "excluded_background",
+              "non_approach_lane_count"
+            ]
+          },
+          "actor_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "road_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "world_issue_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "non_approach_lane_count"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "world_issue_ids"
+              ],
+              "properties": {
+                "actor_ids": {
+                  "maxItems": 0
+                },
+                "road_id": {
+                  "type": "null"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "actor_ids": {
+                  "minItems": 1
+                }
+              },
+              "not": {
+                "required": [
+                  "world_issue_ids"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "execution_evidence.schema.json": {
+      "sha256": "61dcda630af9d24a1d2164050ef1ed77e072cf307df9cd03ec94dda422a3aa52",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "input_hashes",
+          "lane_knowledge",
+          "limitation_bindings"
+        ],
+        "properties": {
+          "input_hashes": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "state/world_context.json",
+              "state/behavior.json",
+              "state/actor_registry.json"
+            ],
+            "properties": {
+              "state/world_context.json": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "state/behavior.json": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "state/actor_registry.json": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          },
+          "lane_knowledge": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "count",
+                "anchors",
+                "evidence_frame_ids"
+              ],
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "exact",
+                    "minimum",
+                    "unknown"
+                  ]
+                },
+                "count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "minimum": 1
+                },
+                "anchors": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "lane_id",
+                      "ordinal_from_right",
+                      "evidence_frame_ids"
+                    ],
+                    "properties": {
+                      "lane_id": {
+                        "type": "string"
+                      },
+                      "ordinal_from_right": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "evidence_frame_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "evidence_frame_ids": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "exact",
+                          "minimum"
+                        ]
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "count": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "limitation_bindings": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "limitation_binding.schema.json"
+            }
+          },
+          "reason": {
+            "type": "string"
+          },
+          "dependency_bindings": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "road_id",
+                "evidence_frame_ids",
+                "side"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "unused_roadside_side"
+                },
+                "road_id": {
+                  "type": "string"
+                },
+                "evidence_frame_ids": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "side": {
+                  "enum": [
+                    "left",
+                    "right"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "intersection_review_repair.schema.json": {
+      "sha256": "978fdf5d966a76ac5027ac1586ee1d2348efe846f6d330169cdcb431b31cce85",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "base_sha256",
+          "input_sha256",
+          "actor_id",
+          "replacements"
+        ],
+        "properties": {
+          "base_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "input_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "actor_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "replacements": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "value"
+              ],
+              "properties": {
+                "path": {
+                  "enum": [
+                    "/evidence_frame_ids",
+                    "/context_frame_ids",
+                    "/reason",
+                    "/covered_world_ids",
+                    "/covered_limitation_ids",
+                    "/limitation_bindings",
+                    "/dependency_bindings",
+                    "/status",
+                    "/crosswalks"
+                  ]
+                },
+                "value": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "scene_corrections.schema.json": {
+      "sha256": "f9830123391b333fd7f1ce73e9ca58903f38c6e724a861f7d905dabf2b6d978b",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "revision",
+          "parent_analysis_sha256",
+          "reason"
+        ],
+        "properties": {
+          "revision": {
+            "const": "user_scene_revision.v1"
+          },
+          "parent_analysis_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "actor_lanes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "actor_initial_gaps_m": {
+            "description": "User-confirmed execution-only initial centre gaps ahead of ego; source trajectories remain unchanged.",
+            "type": "object",
+            "minProperties": 1,
+            "propertyNames": {
+              "pattern": "^actor_[0-9]{3}$"
+            },
+            "additionalProperties": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          "highway_layout": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "road_id",
+              "driving_lane_count",
+              "lane_remap",
+              "right_parking_area"
+            ],
+            "properties": {
+              "road_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "driving_lane_count": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 6
+              },
+              "lane_remap": {
+                "type": "object",
+                "minProperties": 1,
+                "propertyNames": {
+                  "pattern": "^lane_[0-9]{3}$"
+                },
+                "additionalProperties": {
+                  "type": "string",
+                  "pattern": "^lane_[0-9]{3}$"
+                }
+              },
+              "right_parking_area": {
+                "type": "boolean"
+              }
+            }
+          },
+          "ego_entry_time_s": {
+            "type": "number",
+            "minimum": 0
+          },
+          "execution_duration_s": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "side_road_lane_counts": {
+            "type": "object",
+            "propertyNames": {
+              "enum": [
+                "road_002",
+                "road_004"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "count",
+                "status",
+                "confidence",
+                "reason"
+              ],
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 4
+                },
+                "status": {
+                  "const": "estimated"
+                },
+                "confidence": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "parked_vehicles": {
+            "type": "array",
+            "maxItems": 12,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "side",
+                "x_m",
+                "color",
+                "vehicle_class"
+              ],
+              "properties": {
+                "side": {
+                  "enum": [
+                    "left",
+                    "right"
+                  ]
+                },
+                "x_m": {
+                  "type": "number"
+                },
+                "color": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "vehicle_class": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "actor_fields.schema.json": {
+      "sha256": "2d84c9a06ed64680b55a4c236f6d16bea64f5207a5c02f3590ba29959d5324b0",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "description": "Shared Actor wire fields. Required sets and stage-specific observations remain in their owning schemas.",
+        "$defs": {
+          "actor_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "actor_type": {
+            "type": "string",
+            "minLength": 1,
+            "description": "新建身份使用 canonical_actor_type 大类，汽车写 vehicle，车型写 vehicle_class。下列 legacy 分支仅兼容已有身份；下游阶段逐字沿用冻结 Registry.actor_type，不重写身份。未知对象用 unknown；特殊车辆仍是 vehicle。",
+            "anyOf": [
+              {
+                "$ref": "#/$defs/canonical_actor_type"
+              },
+              {
+                "$ref": "#/$defs/legacy_vehicle_type"
+              },
+              {
+                "enum": [
+                  "parked_vehicles",
+                  "pedestrian_pair",
+                  "other_object",
+                  "bicyclist",
+                  "bicycle_rider",
+                  "animals",
+                  "dog",
+                  "cat",
+                  "horse",
+                  "deer"
+                ]
+              }
+            ]
+          },
+          "identity_description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "first_seen_frame_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "lane_reference": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "description": "Known global World lane reference, or null when unknown. Never derive the ID from a road-local ordinal."
+          },
+          "road_reference": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "description": "Known World road reference, or null when unknown."
+          },
+          "ordinal_from_right": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "Zero-based road-local position, or null when unknown; not the global lane ID suffix."
+          },
+          "canonical_actor_type": {
+            "enum": [
+              "vehicle",
+              "pedestrian",
+              "cyclist",
+              "animal",
+              "static_obstacle",
+              "other",
+              "unknown",
+              "vehicle_group",
+              "pedestrian_group",
+              "cyclist_group",
+              "animal_group"
+            ]
+          },
+          "legacy_vehicle_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "car",
+                  "sedan",
+                  "suv",
+                  "van",
+                  "truck",
+                  "bus",
+                  "motorcycle",
+                  "bicycle",
+                  "tractor",
+                  "pickup",
+                  "compact_car",
+                  "coupe",
+                  "mpv",
+                  "minivan",
+                  "box_truck",
+                  "hatchback",
+                  "minivan_or_suv",
+                  "ego_vehicle"
+                ]
+              },
+              {
+                "type": "string",
+                "pattern": "^(vehicle|car|truck)_.+$"
+              }
+            ],
+            "description": "Legacy vehicle aliases, excluding the canonical vehicle_group category."
+          },
+          "color": {
+            "description": "主车身颜色；无法可靠判断时保留 unknown，由 Converter 在执行副本中使用获准默认值。",
+            "anyOf": [
+              {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              {
+                "type": "object",
+                "required": [
+                  "status",
+                  "value"
+                ],
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "observed",
+                      "estimated",
+                      "unknown"
+                    ]
+                  },
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "reason": {
+                    "type": "string"
+                  },
+                  "frame_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "time_s": {
+                    "type": "number"
+                  }
+                },
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "status": {
+                          "const": "estimated"
+                        }
+                      },
+                      "required": [
+                        "status"
+                      ]
+                    },
+                    "then": {
+                      "required": [
+                        "confidence",
+                        "reason"
+                      ]
+                    }
+                  }
+                ],
+                "additionalProperties": true
+              }
+            ]
+          },
+          "vehicle_class": {
+            "description": "车辆细分类。observed 的视频位置必须写在本字段的 frame_id/time_s 或本字段的 evidence[]；Actor 同级 evidence 和 reason 中的帧号不算本字段证据。看不清写 status=unknown、value=null、reason。优先 sedan/suv/van/truck/bus/motorcycle/bicycle/tractor/pickup；有证据的其他车型（如 fire_engine）保留原名。不要猜 sedan；Converter 仅在执行副本中回退。旧 subtype 仅作兼容输入。",
+            "anyOf": [
+              {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              {
+                "type": "object",
+                "required": [
+                  "value",
+                  "status"
+                ],
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "minLength": 1
+                  },
+                  "status": {
+                    "enum": [
+                      "observed",
+                      "estimated",
+                      "unknown"
+                    ]
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "reason": {
+                    "type": "string"
+                  },
+                  "frame_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "time_s": {
+                    "type": "number"
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "status": {
+                          "const": "observed"
+                        }
+                      }
+                    },
+                    "then": {
+                      "anyOf": [
+                        {
+                          "required": [
+                            "frame_id"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "time_s"
+                          ]
+                        },
+                        {
+                          "properties": {
+                            "evidence": {
+                              "contains": {
+                                "type": "object",
+                                "required": [
+                                  "status"
+                                ],
+                                "properties": {
+                                  "status": {
+                                    "const": "observed"
+                                  }
+                                },
+                                "anyOf": [
+                                  {
+                                    "required": [
+                                      "frame_id"
+                                    ]
+                                  },
+                                  {
+                                    "required": [
+                                      "time_s"
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "evidence"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "additionalProperties": true
+              }
+            ]
+          }
+        }
+      }
+    },
+    "actor_registry.schema.json": {
+      "sha256": "5b28ff2df3b80ca7d210456f35b0f4c18949a1891041afcad5e14b20048adaa8",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "actor_id",
+            "actor_type",
+            "first_seen_frame_id",
+            "identity_description"
+          ],
+          "properties": {
+            "actor_id": {
+              "$ref": "actor_fields.schema.json#/$defs/actor_id"
+            },
+            "actor_type": {
+              "$ref": "actor_fields.schema.json#/$defs/actor_type"
+            },
+            "vehicle_class": {
+              "$ref": "actor_fields.schema.json#/$defs/vehicle_class"
+            },
+            "first_seen_frame_id": {
+              "$ref": "actor_fields.schema.json#/$defs/first_seen_frame_id"
+            },
+            "identity_description": {
+              "$ref": "actor_fields.schema.json#/$defs/identity_description"
+            },
+            "confidence": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "hypothesized_lane": {
+              "$ref": "actor_fields.schema.json#/$defs/lane_reference"
+            }
+          }
+        }
+      }
+    },
+    "vehicle_census.schema.json": {
+      "sha256": "9e870412029e46d9625e3788b295b7be9e1984504051b59cf5fed9d133ed162f",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "frame_id",
+            "time_s",
+            "vehicles"
+          ],
+          "properties": {
+            "frame_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "time_s": {
+              "type": "number",
+              "minimum": 0
+            },
+            "vehicles": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "object_id",
+                  "description",
+                  "binding",
+                  "actor_id",
+                  "candidate_actor_ids"
+                ],
+                "properties": {
+                  "object_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "description": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "binding": {
+                    "enum": [
+                      "existing",
+                      "new",
+                      "unresolved"
+                    ]
+                  },
+                  "actor_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "minLength": 1
+                  },
+                  "candidate_actor_ids": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "census_observation_refs.schema.json": {
+      "sha256": "b3e0c7e92d9323090d710516ecaec452665b88893ca12abcd1e9a86c5a83119f",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "World census v6 observation reference extension",
+        "description": "Typed observation references only. Exclusion authority requires a verified census-execution.v2 receipt; legacy execution semantics do not change.",
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "consumers": {
+    "global-video-understanding/skills/_lib/__init__.py": "be8bc7dac7d89b1227aa7f0ab305be157572455506385b4104c5ec1b783e2bc2",
+    "global-video-understanding/skills/_lib/behavior/__init__.py": "2219b94cfc1dc226b1a479898bde5b1f744bbc7f87d7234e998775d20d456a2d",
+    "global-video-understanding/skills/_lib/behavior/actor_motion_review.py": "de6b715bff662c8c5ff76183cb73dc454b84461ca59823368ea830e005475f08",
+    "global-video-understanding/skills/_lib/behavior/bounded_repair.py": "23e40e3335921d4c4db3290a27c4e42cd4a6c616b72f5d78a9ccb9df07caee98",
+    "global-video-understanding/skills/_lib/behavior/census_read_view.py": "01e3bb7f499c8114f58a24e93fecea9774133e84c3870ebc2287c181f507daf7",
+    "global-video-understanding/skills/_lib/behavior/compile.py": "e4ac0241d0cb72bba8ef7ecb29182db26ad689e08eebac997f950b794b37126b",
+    "global-video-understanding/skills/_lib/behavior/fidelity_motion.py": "b0240a8b7761ee85ffed29c216e40be88aab479ee65d4b32425680051bb25014",
+    "global-video-understanding/skills/_lib/behavior/input_binding.py": "37ccc939a93b9fb8a580738dfb11c029676716d2b2c48820c19e7da4c4706079",
+    "global-video-understanding/skills/_lib/behavior/intersection.py": "a91037204ee50ad06e6f53f3d3a3db51b4788bf2328d4fd539256be037ae8239",
+    "global-video-understanding/skills/_lib/behavior/intersection_evidence.py": "2a3e5af99d952b134f39636220657502df5bf027e7f5c7931a1c18a87adc83a7",
+    "global-video-understanding/skills/_lib/behavior/lane_change.py": "c70fd35f0ed1e0461f16dbc8790f1906c4685a3e681f6b1bf5c2216c7aea52c0",
+    "global-video-understanding/skills/_lib/behavior/lane_completion.py": "fdf6a9a31350a07158f623ce82fdb88f2eab56a58caea4f18ae467c76fa0c340",
+    "global-video-understanding/skills/_lib/behavior/longitudinal.py": "18e1852c52b51975a1c03082126ab6280b876d3c1cb703cb25c32701552232ee",
+    "global-video-understanding/skills/_lib/behavior/motion.py": "cbea564bf43552feb37ff592c5643806ab93f499a5454d53a41d2f5409cf0b36",
+    "global-video-understanding/skills/_lib/behavior/preview_contract.py": "b6aba00128641f481a44c2dc942358d7deb75235d083373a7cfd79a13de7f0ba",
+    "global-video-understanding/skills/_lib/behavior/preview_recovery.py": "eb28043a5129ee229f9805cccb66bdf9f7222384cadaf5e3dcb71063ff9cd02c",
+    "global-video-understanding/skills/_lib/behavior/preview_repair.py": "0fb9d32e83b4249004e1d32c0e44400cb6b02b1a1c90db5002b266478ac194f8",
+    "global-video-understanding/skills/_lib/behavior/repair.py": "88a66737ba70ebed13f5e8369b311a7bf7c98f7385fe02110cf62b3b2a94d4bf",
+    "global-video-understanding/skills/_lib/behavior/review_contract.py": "828922946899c922ccb46ce59226f2eba0763da43df98b0d76fded842814a944",
+    "global-video-understanding/skills/_lib/behavior/scene_revision.py": "0c598448401f6d0fb73e53aa5539be0717287952d2820bf068e769132a3b6704",
+    "global-video-understanding/skills/_lib/behavior/semantic.py": "f01cec6e01e7782e58d8ce318980c510f93dd6e53a01e54b3df6090a7920228c",
+    "global-video-understanding/skills/_lib/behavior/source_revision.py": "d19d442cdb0e7015d9f2f14fd1cc680720b28275de4b8a3f9b6e5637ab1b00ff",
+    "global-video-understanding/skills/_lib/candidate_validation.py": "3785aa765dcbf0cd963a27b0018d17ba14c976ec86c059aef8e28f5c1fc59c6b",
+    "global-video-understanding/skills/_lib/contracts/__init__.py": "087d84f7444f074d9dc4b67f3e577018eadd6e4f1e510bde9b8c90dda17d8ce7",
+    "global-video-understanding/skills/_lib/contracts/actor_identity_revision.py": "e5bd9333cc71a5e767cab3805d72b38ee23cb8e89d226120778fd55a8044d436",
+    "global-video-understanding/skills/_lib/contracts/actor_identity_split.py": "b6a81446da7f465fad864db8cb9a02aab931356a65c6688bc15b626946463714",
+    "global-video-understanding/skills/_lib/contracts/actors.py": "46be2187b61359242aa5157dba2324a86830545a56a359000cea397009aca1dc",
+    "global-video-understanding/skills/_lib/contracts/analysis_reconciliation.py": "b72d4a4e374e6f15836d349b19d9b3120346511f0f6aa7c9e161a47ef81536f7",
+    "global-video-understanding/skills/_lib/contracts/batch_capacity.py": "e3bc42d2b4feacc8453c8a3a1f0e50090180981e919693feb0143fc98513b20d",
+    "global-video-understanding/skills/_lib/contracts/behavior_census_scope.py": "2a9867bba7eeb717f413d1e555ce5f5779ac27249136c16eddc03615ea318823",
+    "global-video-understanding/skills/_lib/contracts/behavior_handoff.py": "944526aefdb5d57c3e6cdb7a911d39c9ca47716f30de62c8b0478c89ffeb97e8",
+    "global-video-understanding/skills/_lib/contracts/bounded_execution.py": "30152e6918b96efc4c9d5796e681f07cfadcf629645b361d8b4cb9dca2cc2ae6",
+    "global-video-understanding/skills/_lib/contracts/census_adjudication.py": "dc274f78f0e7e728c1c3c8a8aee0af38bf7701a638fe04e97086d81913d4d902",
+    "global-video-understanding/skills/_lib/contracts/census_evidence.py": "bf6b792a725f56a68c3b4e580259c34d95880be5ab0a03e8fe48929e7bdae09a",
+    "global-video-understanding/skills/_lib/contracts/census_execution.py": "634dd21a26902c89cefe30b7564e05cbe31050ff5e467f1f331c625695b7c208",
+    "global-video-understanding/skills/_lib/contracts/census_history.py": "1c169e0ef3b1aaa6bc637c201f512b2432dc7829c4490165c2e58e1cdfd8f619",
+    "global-video-understanding/skills/_lib/contracts/census_identity.py": "aad9eaf9112a0b1e5f02d4d4723748064e0d3b3d3e8222e042399f79c6d3e769",
+    "global-video-understanding/skills/_lib/contracts/census_information.py": "95cd2688eb8a27caff55c21446f5090b66b8ce18ee7be57b1ef76e0ee7dea42c",
+    "global-video-understanding/skills/_lib/contracts/census_relevance.py": "8295f971702ae67a3f3dd8557be8bc59c108b04e3ce573e6e8714575a172e63e",
+    "global-video-understanding/skills/_lib/contracts/census_scope.py": "82d549223932a7a7bb6baeb93e4826d2f215f376b104114c610322d5313dabe4",
+    "global-video-understanding/skills/_lib/contracts/conversion_policy.py": "3c7448a1bbfe3c58663664e2920494823b9fe28f9a6a263c4b02cc886ba92123",
+    "global-video-understanding/skills/_lib/contracts/core_identity_hypothesis.py": "b4a66d85fb01a004eaaa6432667b9e95f0efcc412083fb4748bb1f8e363c4b21",
+    "global-video-understanding/skills/_lib/contracts/core_lane_continuity.py": "1240818858824e768fca991759175a8e97d8d9f63e715c1e0b93be57716c3263",
+    "global-video-understanding/skills/_lib/contracts/core_projection_sources.py": "75723459c0161a0543130ef28f15e57493aec4360a8d91066efec89d9e872e0a",
+    "global-video-understanding/skills/_lib/contracts/core_scene_scope.py": "0a3e867907652dd173438889980d1a756d55c2df094292b5245d37cf283b46fc",
+    "global-video-understanding/skills/_lib/contracts/description_draft.py": "772204833202d15d8de4384b6325de7160cb978a0cf5c00e7106e0d65ac8fa8a",
+    "global-video-understanding/skills/_lib/contracts/downstream_scope.py": "c278d744724ed14aa76a7d54a87e87936690f920eb4dc434f09e95f3aae87806",
+    "global-video-understanding/skills/_lib/contracts/early_association.py": "a439c201b5e71142216d76d16866c3051b2505a114a11bd460bbf6583fc6d958",
+    "global-video-understanding/skills/_lib/contracts/entry.py": "a80185b92559604bf6106a491b0871838ba1287565a5d417e2eebe22b94b4f62",
+    "global-video-understanding/skills/_lib/contracts/execution_assumptions.py": "7023952451753bd9aba21f69ec107840d5d867b18bffd323e0aed162e7456c5e",
+    "global-video-understanding/skills/_lib/contracts/execution_gaps.py": "bd541e7d054321e1f14ce4bef7dcc51b4111ff31f20476f103d5e43f22199a6e",
+    "global-video-understanding/skills/_lib/contracts/fact_disagreement.py": "a8bd1a7a26678c99d85d4c10b0ad05c4a06b9527aa43ae00e3ded32be8238248",
+    "global-video-understanding/skills/_lib/contracts/fidelity.py": "138a2bd7fb1d17744b996cab0a4bbcd1b10f09a484f4d9746b34072e3e2565cb",
+    "global-video-understanding/skills/_lib/contracts/frame_evidence.py": "58357a0fd9216c5258f92159a29cfc6406667532d8945842745c43d9917bf91d",
+    "global-video-understanding/skills/_lib/contracts/inherited_opposing.py": "f6c2db2d5cf9fbd3a43b1cccde61c82c50e617b49ae174b5b9664bd9559d1f99",
+    "global-video-understanding/skills/_lib/contracts/lane_locations.py": "a6fb0c3295c3cb3f8503a46c38c6db5581632dfe074318cf3acb8ada6bcce9ed",
+    "global-video-understanding/skills/_lib/contracts/lane_resolution.py": "10cac26e23b30c7e1de40c6ecfa5a8033eba25e115ccceb48554662cd067e163",
+    "global-video-understanding/skills/_lib/contracts/motion_witnesses.py": "86103be992d0f3c5d5bdb5168569c773b21d8b3eb0a562fdd78ef57761f0d490",
+    "global-video-understanding/skills/_lib/contracts/parking.py": "ca51cd54ba503dc4d70529a37ca5868a4096978dcee4badd9f6c439c1de0a6f2",
+    "global-video-understanding/skills/_lib/contracts/peripheral_uncertainty.py": "4d48912ffb4a74e0d6fcea3ba1c7ec8c1a795d4cba72fe81e048e4c28599d8c8",
+    "global-video-understanding/skills/_lib/contracts/reconciliation_alignment.py": "1a426e5567018833d62674618e47609284fbf599e9365cfdfe698871bfe790d1",
+    "global-video-understanding/skills/_lib/contracts/retained_motion.py": "eb10b2dfd9f5fc5cb66b84f23c3f793c7040a6d13970db71ec3169fc75792683",
+    "global-video-understanding/skills/_lib/contracts/semantic_gap.py": "31dc9bb9654a61fd04a3df9dea001428fb103b43e74d80e76b946d4d53483545",
+    "global-video-understanding/skills/_lib/contracts/semantic_motion.py": "e954be7d7138ce5f58f4ca34bc385097604b2f6832e0dda374ac8197d24311c4",
+    "global-video-understanding/skills/_lib/contracts/unused_association.py": "293cac73d3f113a20c18c2e78bc9e5416dc68f539c9b91cdac2dbb2c55c39109",
+    "global-video-understanding/skills/_lib/contracts/v3.py": "736ec04d34328ba0bfc6a374b9c288ac347c268ce34b4cec927a9a5a02aa8874",
+    "global-video-understanding/skills/_lib/contracts/vehicle_census.py": "12e03ac18704eb56feeb85886f2cba454bd107ae0eb1854e2fa1c80367401f20",
+    "global-video-understanding/skills/_lib/contracts/world_metadata.py": "8b9cd4a86fc9ea9b10aba3f7bff418c078bee12ea2f236228776f752e9bf6899",
+    "global-video-understanding/skills/_lib/delivery/__init__.py": "0ae917b759938a99d3298afcc7d2972920bd448a0af412bcbf0c0528ce6726fc",
+    "global-video-understanding/skills/_lib/delivery/checks.py": "84960a9bee071b42861e8b5b2927e9c30918d431bdcc6362488736a316f0ac4b",
+    "global-video-understanding/skills/_lib/delivery/converter.py": "0f559802fc539ad842af8de8f7704d6fe67893940d4f0d94e62600783ff72efc",
+    "global-video-understanding/skills/_lib/delivery/diagnostics.py": "1ea0607c797d2f6433da0dfabf9af1585e6b21ee93e497e93f06114d207bfe06",
+    "global-video-understanding/skills/_lib/delivery/media_time.py": "c2575f472e254a9d19e3e9cccb3395e632393aa224bc569b324b339c7be31aaf",
+    "global-video-understanding/skills/_lib/delivery/motion_check.py": "c1314daa64d3de9479926fb71f749d0571317f165ab1def968289ab8fb50c4c6",
+    "global-video-understanding/skills/_lib/delivery/projector.py": "8589efcacce8679f344362231127b815b7b8ce1876b4a2f272443cdbb92a4b4f",
+    "global-video-understanding/skills/_lib/delivery/report.py": "360f55918f1b8b11a3af3ffb21d6b7546f9014bc652fe71584f77c822a7de5b4",
+    "global-video-understanding/skills/_lib/delivery/source_constraints.py": "8b8e87de44e9a6eba4a5440ea0597dc4f706942feec79abb2d351384bc8433c1",
+    "global-video-understanding/skills/_lib/delivery/synthetic_target.py": "836a02407cb704f1367afc045ca7dd0e51c443b2864b6024f87aab405aaf00b8",
+    "global-video-understanding/skills/_lib/experimental/__init__.py": "69a363a92be8fc381bdfd095f4f2507e550c3fc50882846200888ac2dd7d9c45",
+    "global-video-understanding/skills/_lib/experimental/constraint_solver.py": "cb30cdf819997932eb89ed79f746e8a295e668cc26aa734689fb292e0ae2eb92",
+    "global-video-understanding/skills/_lib/fingerprint.py": "56979067807e1b98b3ca6491e57cc66f141ae0009d38cd1f10af8fd59ea3a516",
+    "global-video-understanding/skills/_lib/legacy/__init__.py": "72e1bfea019648ccb91c73dcb8b1b5889d41ad785eb806a722a4d5fe3a15e0ed",
+    "global-video-understanding/skills/_lib/legacy/v2/__init__.py": "474b2ff139b6bce7602c6672cd5cb577611f26acbbb069a367e9c40fad714c72",
+    "global-video-understanding/skills/_lib/legacy/v2/batch_contract.py": "c477279eaf2201bb2e3cd7d1ab15d6cd28f8f650a832ed7fa76795a730e9af2d",
+    "global-video-understanding/skills/_lib/legacy/v2/minimum_fallback.py": "1bf127a17d59fbd6a5cc02a496f723c24df8b43270505adb91b4e7e0cd3bbfbb",
+    "global-video-understanding/skills/_lib/legacy/v2/short_scene_compiler.py": "2fb4b3c93f4ca8122344ed661849609408e9bae14548201c85c1974afa3e12f3",
+    "global-video-understanding/skills/_lib/paths.py": "559e34298c78b87384fe05e9a729fdc232b47e947e78568b85bd03f847afa7e6",
+    "global-video-understanding/skills/_lib/prompts.py": "65ddf192251fb6513b801ed8f70b36d6aba8b5df08aadaa3a8946a260a3bf75f",
+    "global-video-understanding/skills/_lib/runtime/__init__.py": "4357c4a94bae92d8688afaa44b5ff19cd7f207da3e076d5b1576162b6e0c7dd2",
+    "global-video-understanding/skills/_lib/runtime/behavior_scope_review.py": "67d6b9ab01bfbb6db8c6da57287ac712d4ec0cfdd9254b47570264dd54177205",
+    "global-video-understanding/skills/_lib/runtime/behavior_timeout_retry.py": "6d9febbc7f4dc2816183278516746b26f908facf385de7ad8b37d176fdb8844f",
+    "global-video-understanding/skills/_lib/runtime/bounded_recovery.py": "f223b957597e3218eb161db91552c5dd0b085466d19bbf5953ab4687c1a77264",
+    "global-video-understanding/skills/_lib/runtime/case_core.py": "d1592044ed269fb28ec203a8a87755f9127a2e3f2c028ca0752075e353e3ecef",
+    "global-video-understanding/skills/_lib/runtime/census_information_adoption.py": "12d33736574c04c3f0dc408e0c42d0e572549992d93e4a468237faadc696ca8e",
+    "global-video-understanding/skills/_lib/runtime/census_relevance_adoption.py": "b481e3599819a36be99f3932bdf68bb53463dd3784638743f8c7311beac1b9a0",
+    "global-video-understanding/skills/_lib/runtime/census_scope_recovery.py": "0123b029403afa02da0e9293a215aae27965d45b7963e0021e28fb0cfac48da1",
+    "global-video-understanding/skills/_lib/runtime/census_task_accounting.py": "2c6da9dbfc423bf9bf63a2ae68a8792634b25b21b6f2d8a56567c07cf42f662d",
+    "global-video-understanding/skills/_lib/runtime/conversion_work.py": "d45c403468cada081b81492f3a0a080c2f01d400979bb977eac7e6dc4d44894d",
+    "global-video-understanding/skills/_lib/runtime/core_approximate_delivery.py": "60764f845b82e9c50219d99cfd69baa4791619db958033f29d7b4f193899c274",
+    "global-video-understanding/skills/_lib/runtime/core_motion_recovery.py": "7f14f599b0e85549a200ecd56d2765216f38ce81bafabe6d8c7f8c2b9792b544",
+    "global-video-understanding/skills/_lib/runtime/core_scene_scope.py": "dd8829d1a0152322dc584e0a75737bbef2b33bbeeb28a93681e1db28de16e912",
+    "global-video-understanding/skills/_lib/runtime/description_fallback.py": "42592283472abe93eccedd9b0e43721e666452aa25662275b1c819e67510c253",
+    "global-video-understanding/skills/_lib/runtime/downstream_scope_review.py": "9336283ac6f727c7c10ed233a799e0214b7c5497ecd9af1b612afa5503bfe48a",
+    "global-video-understanding/skills/_lib/runtime/execution_plan.py": "387769afdd84f52fc02f0a58717d36d74a3f1482319c76707082f0b72af6eb72",
+    "global-video-understanding/skills/_lib/runtime/execution_policy.py": "c7ca8b41c1653c642ea30db42e2abb2cb712cecae200a317c96fd9731ff49b45",
+    "global-video-understanding/skills/_lib/runtime/execution_scope.py": "4a321efb3cf1f8e966281f67558b577c2eeb53b40b8f52a6cab599bd4652d8ec",
+    "global-video-understanding/skills/_lib/runtime/fact_revision_review.py": "c6f8ab7d893c6873e46fcfa51c2c844d6db2c3df8e7b31b52a97f6d8a69973bc",
+    "global-video-understanding/skills/_lib/runtime/fact_versions.py": "b0c0be573c20ca6cc3d7b7079162a4882b6b0ab7467adc4ff4c7baa9f94a39c5",
+    "global-video-understanding/skills/_lib/runtime/identity_revision.py": "8abee8b3d90640ae281c76af0d685ce03b8879f5a1ab9ae02bc04ccd8f216d9a",
+    "global-video-understanding/skills/_lib/runtime/identity_split.py": "fac255e41526dbfe264f70f5765f7de6086383efc6d8182aff7b61fff0c9a672",
+    "global-video-understanding/skills/_lib/runtime/orchestrator.py": "f27de783e1bf28325672f1bf2d95263c2543f47d06276481f931d9e5801bc93c",
+    "global-video-understanding/skills/_lib/runtime/question_review.py": "14ca8b9624ea23b943a525af5bc651c9f9632144bf43f6368a38cc8d676992b2",
+    "global-video-understanding/skills/_lib/runtime/reconciliation_review.py": "29719f34d63bf9e0c0544cfe4f95e83ddca4bb6baf855c960859140fb61d801d",
+    "global-video-understanding/skills/_lib/runtime/routing.py": "803ec40caa33352050295efd3027d6f35021b72a4112d1e626ec0a1c026fe3dd",
+    "global-video-understanding/skills/_lib/runtime/scene_revision.py": "b4c2c044c947fe4ccdfc3a4f158f1ec27e7ae5344015fd5921de027859d5cc88",
+    "global-video-understanding/skills/_lib/runtime/v3.py": "c66de35664d9026c62448a53fb522e28fe6ad11cc69f126b72ef19f923e56510",
+    "global-video-understanding/skills/_lib/runtime/world_adjudication.py": "debb26583dae45804f13cdf134a59fdd4bcfcd1588613d4e9e190dc7aef6dc2a",
+    "global-video-understanding/skills/_lib/stages/__init__.py": "0bf1452691b8de48b286111d103d3d3a47e46e0f8c63a5bb9e91766db875e2b9",
+    "global-video-understanding/skills/_lib/stages/batch.py": "798d949dc45a65ec0d7a60acd8cba7530ddc71b95a2d772b02d11a0bf40fa937",
+    "global-video-understanding/skills/_lib/stages/behavior.py": "5c2b96808a0d234b90b2ac9ff690352480939655e7dcd5b5effbcb39f9bc1aec",
+    "global-video-understanding/skills/_lib/stages/delivery.py": "e35bcd680ffdd6e2649b1c7f7c67637d1274420c817a516613228535fc7f2b9a",
+    "global-video-understanding/skills/_lib/stages/intersection.py": "c6139dfe6167c99968b556e41a2f1dcd0ddecdd6691cd5a2ac6f60a60994a234",
+    "global-video-understanding/skills/_lib/stages/preview_separation.py": "b4bd209ede13e388819bb06e319a3ff3dfd159571dcb0314fcfb1789c4ce4033",
+    "global-video-understanding/skills/_lib/stages/reconciliation.py": "419983bbcf23368fa86712c7a2ec3fb412db1b646e9ab9f8867d055e069e6bfe",
+    "global-video-understanding/skills/_lib/stages/world.py": "bb17194b803f0dc29d7980dd119524116f77bbb9e16556452611e4477d0ac553",
+    "global-video-understanding/skills/_lib/world/__init__.py": "e409bdaab46e4b07cc1f3e0ce5b9fe409fbd9a029faa12babb56a3e41905a2a5",
+    "global-video-understanding/skills/_lib/world/actor_facts.py": "8eb78667cc3039b27e17b8006e50798bdf85316c2a26cb35250cb7b0b25c5441",
+    "global-video-understanding/skills/_lib/world/admission.py": "7ff407b55541af9d9008668a3924962ca4640ec4826b8004c0366d784f024e26",
+    "global-video-understanding/skills/_lib/world/closure.py": "ee2cafbcb0812ea262fa4cded010771fac68fa3c48f4a7e63f31459d0d23356a",
+    "global-video-understanding/skills/_lib/world/compilation_repair.py": "97861223870932631ff1a1cb1603cf359a6900445293f1b0f5da6ff627748a0c",
+    "global-video-understanding/skills/_lib/world/field_repair.py": "58fe1f0ee4695033b488cf04308217ac2cc52db78dbcde1a8af1d88d00bb06fc",
+    "global-video-understanding/skills/_lib/world/gaps.py": "d511f0ff6f75283e18daa9c63a4077604d08b290327d4cf9ce2e5eab415d163d",
+    "global-video-understanding/skills/_lib/world/lane_layout.py": "02f6fad98d28520aad0758edf54391efcbcbc5eaf01784c095bddea1575adca9",
+    "global-video-understanding/skills/_lib/world/lane_numbering.py": "e8a444184004045594e97eb2cd36576f0d7106ab1e09b45e52d8f7d349158233",
+    "global-video-understanding/skills/_lib/world/layout_correction.py": "5d38454d154bfba492b80930dc98199cbfcdaf1c1fbef796009205deba2a1f2f",
+    "global-video-understanding/skills/_lib/world/point_review.py": "ef252a92f8faae0cd85d0957433b547eba10a2f9a9c4c90d9598fb22edd62835",
+    "global-video-understanding/skills/_lib/world/post_behavior.py": "fd94fa1596efc662d33ea75a4d5263c127bfda145da23656cbfb5017021222a8",
+    "global-video-understanding/skills/_lib/world/readiness.py": "cce8e1449107503dc6387f6d65ff89c4eb8acd88533ddbf35afcb0e362970d6d",
+    "global-video-understanding/skills/_lib/world/semantic.py": "f1468515e4aff9cb7317c7d9e81c5a0fe1595e44002bd51d292ae2ee5ced0e5f",
+    "global-video-understanding/skills/_lib/world/single_world.py": "3746fd34201a3f3eb295385c8dafd0caf723e8071d8e97f56e65571adf52a9d5",
+    "global-video-understanding/skills/_lib/world/topology.py": "317722b04999b7b6419e0a2e53310b33f3fb55090707fe701ba7daf32e1bfe5f",
+    "global-video-understanding/skills/batch-lifecycle/references/independent-layout-prompt.md": "e162b19b5706f69b928fdede6ab9d43a3bc405a17113d1857c593686be534371",
+    "global-video-understanding/skills/batch-lifecycle/references/worker-prompt.md": "f0e3dfdc8e6e2cf328c8e29a28a42b9acada5b66974dfb5ba19961b4aa3f3f9d",
+    "global-video-understanding/skills/behavior-understanding/references/identity-link-prompt.md": "e5cb804d905ae74f4c49ec4e84b403e6ecdf0e07e8d6c7adf3494912c9b85749",
+    "global-video-understanding/skills/behavior-understanding/references/identity-split-prompt.md": "4baf981bb97b97dbff506ed5c68a0a60be5a847a327e3bb82110038df67fa290",
+    "global-video-understanding/skills/behavior-understanding/references/intersection-review.md": "8d02140a70a6fbce52557f9b189a3383a1ed1c43d8fddbe98f5bf2e1090cfd81",
+    "global-video-understanding/skills/behavior-understanding/references/prompt.md": "b9318e24af42d24436330b597593905632cab9cb526ebd541a201b9ccd0a0379",
+    "global-video-understanding/skills/behavior-understanding/references/repair-prompt.md": "81fad48a28d49407a9b229bceacca46167a7a08c0ae31442717d053043b11d98",
+    "global-video-understanding/skills/behavior-understanding/references/semantic-fields-prompt.md": "62557c667ceb02067f1885f7e4de7e14d73e9f26da0675996a4f12532415d184",
+    "global-video-understanding/skills/references/road-coordinate-convention.json": "7ecbc4720ccdac15994437d2e3ca70fdbfd53404a1c706fe7c17782b56da05e7",
+    "global-video-understanding/skills/world-understanding/references/closure-prompt.md": "78916a40e5c39ee684a3300a712f7546c9c42d1cd890e09e0266c1c4e66ece14",
+    "global-video-understanding/skills/world-understanding/references/lane-layout-closure-prompt.md": "cb30ac1217d5fd739d1e9fb2a34b5ee7c4093d5b6886348bc7a43fef30b15ab9",
+    "global-video-understanding/skills/world-understanding/references/lane-layout-decision-prompt.md": "bf58f5790a52ac6e9992dab95c19021e9353841d872079a90d26d3d216f3e1ab",
+    "global-video-understanding/skills/world-understanding/references/lane-layout-decision-v3-prompt.md": "40b6cbc99bdac0c98057958cc22fea3c7b5d8d808ffadb7b2e914a0ad38f42c6",
+    "global-video-understanding/skills/world-understanding/references/lane-layout-decision-v4-prompt.md": "86707ea9e58fc9c7ecd25d39c69dc5a9918d5f1cc815d3b2b9aae89f4f0b62de",
+    "global-video-understanding/skills/world-understanding/references/lane-layout-decision-v5-bands-prompt.md": "bb56dcf1ac28da379d0490231973250f71e2f2d91b2239dcdec429723ff081fd",
+    "global-video-understanding/skills/world-understanding/references/lane-layout-decision-v5-prompt.md": "adfd7c091a9d90bec6764bedceeaed4f1a51ccbecbca56c669a1a530ff0568b9",
+    "global-video-understanding/skills/world-understanding/references/lane-layout-decision-v6-prompt.md": "c3156887cd99dbba92f4d54e7aab0630225ea37f9dcf9b5365da23ca0a786ca3",
+    "global-video-understanding/skills/world-understanding/references/lane-layout-decision-v7-prompt.md": "89984a4f25a1bd9e8e2604be51e233fe82bb0a41b98f647f72a246d861606a40",
+    "global-video-understanding/skills/world-understanding/references/legacy-world-task-prompt.md": "fcc6ce4c5ce71e698c04b8a7672fab20881dc2bdaf52038e297999e2ac816ce1",
+    "global-video-understanding/skills/world-understanding/references/observation-prompt.md": "7870dbd5e681fde7e193b0090f089e494c4dc2c6f52b7959ebd8c1115ef85817",
+    "global-video-understanding/skills/world-understanding/references/prompt.md": "2acdbdbd9ea45750586745943039b0f509aa5b535a4907fa23dadb68edd9af3f",
+    "global-video-understanding/skills/world-understanding/references/readjudication-prompt.md": "68100caafef0cabf3046bb32b3834f2ce17d4332b9213bf36defd90767746f2e",
+    "global-video-understanding/skills/world-understanding/references/single-world-prompt.md": "eb225c2f8776268761af6d8956d0f8d1e5457c7b791abec051209d569764fd89",
+    "global-video-understanding/skills/world-understanding/references/topology-answers-prompt.md": "0aacf3623523588b9a92281d51b3d0d3b08a51ca1a37b970f738104b2abc241f",
+    "global-video-understanding/skills/world-understanding/references/world-census-adjudication-prompt.md": "75f81df351ac5dfd35e9e1218c13679e95b5bab45bff423b83e904f07b762b5c",
+    "global-video-understanding/skills/world-understanding/references/world-census-adjudication-v2-prompt.md": "77d5c892c1598cd2086826e1220622d6cf2c4589d64bbb78a7c7722c515f0594",
+    "global-video-understanding/skills/world-understanding/references/world-census-adjudication-v3-prompt.md": "70f307ed6bb4546df9473954634fc6ad8d6b57807723c5bc6c97d909f3231020",
+    "global-video-understanding/skills/world-understanding/references/world-census-adjudication-v5-prompt.md": "729977f8de48fe0f2b5d54a3146c03f5a0435c192b0b44b3cf0ab2cc7cd4e992",
+    "global-video-understanding/skills/world-understanding/references/world-parts-prompt.md": "067b13f88c7d021f13aaa343397cd79d9ba3a6b62728d3a2e4aff38992458425",
+    "json-coverter/skills/case-conversion/references/analysis-reconciliation-prompt.md": "e2fcae2cac00751b24766b3b098f65ae28873af6d471c3f373400561dfba2476",
+    "json-coverter/skills/case-conversion/references/conversion-continuation-prompt.md": "49daf0c2f03dfd955ac4031507a1244a4bad49d447ec45ee3a9aa114bbf83979",
+    "json-coverter/skills/case-conversion/references/core-motion-recovery-prompt.md": "1c063b112173b26d2ce2006ee04a9a4f78ddfcb24f0e6647262bbea89b84b4dd",
+    "json-coverter/skills/case-conversion/references/description-draft-prompt.md": "6dee364d8d053aed39067b59593c972e87534773b7baf47cc2a68e45a40c9616",
+    "json-coverter/skills/case-conversion/references/semantic-gap-image-prompt.md": "36511c0e9b7b8fb6c2c0ddb131c732ba8a77f736f28eb7333dcf2644ff364591",
+    "json-coverter/skills/case-conversion/references/semantic-gap-legacy-prompt.md": "f5cdf9d71b83e00fe87d6f7fc6674e79a316aa58bbf9a5a81c6e4f6a18344f66",
+    "json-coverter/skills/case-conversion/references/semantic-gap-prompt.md": "edc40713cc9ce6d63dbb097b7836226a0743468886ebc4664d3f25847ef1b7c9",
+    "json-coverter/skills/case-conversion/references/semantic-motion-prompt.md": "f547175833d2b6b9062c25b80a8cd4d3acd0e1d17010e9dd656a409bd5fa66f5",
+    "json-coverter/skills/case-conversion/scripts/lib/builders.py": "b15ebab5c372328c5382cc234eb607833e002d20ec0a3bcaeff2f868489185ef",
+    "json-coverter/skills/case-conversion/scripts/lib/enums.py": "63cab2524357a4c7a0f156c80db50d178c81c597fc84d832cc8f509b91cf308c",
+    "json-coverter/skills/case-conversion/scripts/lib/execution_fallbacks.py": "e5117bb06db29a61c00cfba82915cf798bc5bd8e7e340b40f55581e0c7073eb4",
+    "json-coverter/skills/case-conversion/scripts/lib/motion_timeline.py": "cd22e224639efaac6afbd6e13c379da9fee8b261c788450549507f26f156b46f",
+    "json-coverter/skills/case-conversion/scripts/lib/normalization.py": "34026c2249f06fbc51185f007b088317ff0ab53ad69c29acecb030771c111716",
+    "json-coverter/skills/case-conversion/scripts/lib/parking_layout.py": "aca72bcb1e5945b6e93104408c09ec645fe8318f841f61d4c96262ddaca4ce93",
+    "json-coverter/skills/case-conversion/scripts/lib/path_setup.py": "ae7aa0d5fceeb40382bf61f478eb271f11ea1fdfea0e5c8390a9f02c97f82ff3",
+    "json-coverter/skills/case-conversion/scripts/lib/scene_generation.py": "1ad8c2949bd4d667bf5c02c5be3975931dbd828958fed15bbfb5b7a40c331290",
+    "json-coverter/skills/case-conversion/scripts/lib/topology_connections.py": "f5379002aaa03d45b9006c7420a5ee3ff7662b4326f625d2adbaee7b59161a16",
+    "json-coverter/skills/case-conversion/scripts/lib/validators.py": "3346b171665ef79a0a70cb87f518401df7bba951ed4f9faa4429ceb4890d726d",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/__init__.py": "3598d83cf55dec631ec44b596fad467dbc1ba8fe89c09cbbf40983cae42f84c4",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/error.py": "0e8f63c6afd2b77ad60ee880e368b8e09d1f61e9d6ab5637c51e84d11d541276",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/__init__.py": "8f80577f17d07ffd7c78393a6b9c08cb737c1f901f294b1d9454690921a7eb2e",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/camera_anomalies/__init__.py": "5cbabfe406ddaa3585e9f167a391799f6275b2fa59cb8fbb5a0f16fb8b28e363",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/camera_anomalies/camera_anomalies.py": "c117522b00bdeb0e24620ac8a46b3ef6804a40cac683b11d93faefbd9ec0023e",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/common/__init__.py": "5cbabfe406ddaa3585e9f167a391799f6275b2fa59cb8fbb5a0f16fb8b28e363",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/common/base_class.py": "5ba545885c223093868c6384e2c806b67380a3cb63269aea466df1f1b6c9c710",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/entities/__init__.py": "5cbabfe406ddaa3585e9f167a391799f6275b2fa59cb8fbb5a0f16fb8b28e363",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/entities/entities.py": "b4f5cb26d723c96b150910c313c4dfeae1e6c0e8c53cdc93a314df189e7e6411",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/environment/__init__.py": "5cbabfe406ddaa3585e9f167a391799f6275b2fa59cb8fbb5a0f16fb8b28e363",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/environment/environment.py": "97901410a8ecff394e6a21878dac2487fabb888caea9a01408fe9aa28e328d4a",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scenario/__init__.py": "5cbabfe406ddaa3585e9f167a391799f6275b2fa59cb8fbb5a0f16fb8b28e363",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scenario/action.py": "824771657466d0866e7a2e3bacb695e898e0a5296566c75ead6d39eb102763f3",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scenario/actor.py": "c4dd374419b82bd611fa2aa94528f03270a6adef060116aaa470322a26874c74",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scenario/animal.py": "252e05a62251d704fb9aebd9ead93eb13686d823d269ad953b938a512f468d9d",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scenario/maneuver.py": "b80e77ba940970643273a341627f77bb3735db5f10c5ff41608c8562383cf00b",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scenario/pedestrian.py": "e7cdbdb56f2effdb90cc34a5669a737c9698a3a5f23fe90c179c211b17219cca",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scenario/scenario.py": "891fa86a81d0eaf83d4accf8f3dccc79d15ec02e314910bb0e90e6d60e570c29",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scenario/transition.py": "2515dd5d824fac9c0d605bf62563198a3bcd1b8ce5d55714f19d3deccebe0c77",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scenario/vehicle.py": "27698660d8569baebb34e480aaef6504ffa596e9f39c918a2ff2d94ed53be25f",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/__init__.py": "087d78d0ead45912eb47c444572c54c9abee31c0f5a8df76aa60358cb653a905",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/asset.py": "0064903bdecdd2c9f15384648c9a4eb464845bc1f7737a7e3ef1d1315bcfc350",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/border_feature.py": "af7875d09ce25dad80e9f78a29536b6b3e74625f9c9cfe20be21609e4971b1b3",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/checkerboard.py": "ceb608e9e49143d1e6c4ab986af06e0cecfe050a90bcc4acf8a699f1a6c4b694",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/connection_point.py": "be9c779a02621b378a61ddc27911eab7f308387a27bf667b46358919d7bbc5fb",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/element.py": "979590d92f1597bcee51fbd9d8fb042a6719fb9102abbe827ec1a2df49f11ca7",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/infrastructure.py": "49a8d06a00d124315a874b3f96501afed5cf8d32bacf63351c196bccd9a059c3",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/junction.py": "bb25f6f3cca75c3a51e53b6ecbc6293dc1d2fda1f203b36fbe43656cc84b5938",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/lane.py": "1f4c7976128139e98fdfc1d33bda3a57a89862e11740d972d357470b147656bb",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/obstacle.py": "b7895d3999711ce4e97d9a88731d93758fd39c83f7634a1968aebdd4f3f8a4ac",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/off_road_element.py": "84c85291df049a551047a9a9e0608fb4c5ea4ca30ffacdffe4b8605dffbfca63",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/off_road_surface.py": "1cc4c4cdaae5679530f87ae789ac266e7045ca4b6796298adca6c34a8ba5bfea",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/oriented_point.py": "154fb241b8aaba2a73897a3a00b6fbc9451d7fe36bdacfda7857fcd7b10a2116",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/path_feature.py": "66388dc12cafeb49c4d28fe112ad487511644dff36fc4074371482050b79b008",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/road.py": "1be77ec8b53945f6c9721a842f501781cdcd491f1f23fb5046d774c3654c2b6f",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/road_network.py": "709a8426017c63f05e147f756b7059386c6f9a1e23fcbbaa02737e60c5dce8f3",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/road_segment.py": "b8ff9f5d7f80d1b7f9e70c7aa1d395d0c9ea9ad215f8b10ad0832af4087ef1b5",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/scene.py": "afd1214db6b6b2c24954bb9b5ca60fec7af9f4baad90d064b5ac30eb49bc3fab",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/shoulder.py": "2d2d648bb72b21ceeb203e5cfd943cf4edb698f611dcac8dfa7f0b1cce616804",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/side_walk.py": "fb22ff1176c5fdb4dcbffba7c5c99285edfba6099ac3aaedd55ec65cfd04bff9",
+    "json-coverter/skills/case-conversion/scripts/mela-business-logic/mela_business_logic/scenario_preview/pydantic_classes/scene/terrain_patch.py": "4c7537beae90cb49ea9de6d44266ae643acdbecdc59f0433c29a522762583cad",
+    "json-coverter/skills/case-conversion/scripts/mela_compat/mela_business_logic/__init__.py": "3598d83cf55dec631ec44b596fad467dbc1ba8fe89c09cbbf40983cae42f84c4",
+    "json-coverter/skills/case-conversion/scripts/mela_compat/mela_business_logic/error.py": "0e8f63c6afd2b77ad60ee880e368b8e09d1f61e9d6ab5637c51e84d11d541276",
+    "json-coverter/skills/case-conversion/scripts/mela_compat/mela_business_logic/scenario_preview/__init__.py": "8f80577f17d07ffd7c78393a6b9c08cb737c1f901f294b1d9454690921a7eb2e",
+    "json-coverter/skills/case-conversion/scripts/process.py": "e271b49fa3c2ece8168ae815c5fac870a6f27f937d3b5547e628bd791ed13109",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/camera_anomalies/__init__.py": "5cbabfe406ddaa3585e9f167a391799f6275b2fa59cb8fbb5a0f16fb8b28e363",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/camera_anomalies/camera_anomalies.py": "c117522b00bdeb0e24620ac8a46b3ef6804a40cac683b11d93faefbd9ec0023e",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/common/__init__.py": "5cbabfe406ddaa3585e9f167a391799f6275b2fa59cb8fbb5a0f16fb8b28e363",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/common/base_class.py": "5ba545885c223093868c6384e2c806b67380a3cb63269aea466df1f1b6c9c710",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/entities/__init__.py": "5cbabfe406ddaa3585e9f167a391799f6275b2fa59cb8fbb5a0f16fb8b28e363",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/entities/entities.py": "b4f5cb26d723c96b150910c313c4dfeae1e6c0e8c53cdc93a314df189e7e6411",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/environment/__init__.py": "5cbabfe406ddaa3585e9f167a391799f6275b2fa59cb8fbb5a0f16fb8b28e363",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/environment/environment.py": "97901410a8ecff394e6a21878dac2487fabb888caea9a01408fe9aa28e328d4a",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scenario/__init__.py": "5cbabfe406ddaa3585e9f167a391799f6275b2fa59cb8fbb5a0f16fb8b28e363",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scenario/action.py": "824771657466d0866e7a2e3bacb695e898e0a5296566c75ead6d39eb102763f3",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scenario/actor.py": "c4dd374419b82bd611fa2aa94528f03270a6adef060116aaa470322a26874c74",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scenario/animal.py": "252e05a62251d704fb9aebd9ead93eb13686d823d269ad953b938a512f468d9d",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scenario/maneuver.py": "b80e77ba940970643273a341627f77bb3735db5f10c5ff41608c8562383cf00b",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scenario/pedestrian.py": "e7cdbdb56f2effdb90cc34a5669a737c9698a3a5f23fe90c179c211b17219cca",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scenario/scenario.py": "891fa86a81d0eaf83d4accf8f3dccc79d15ec02e314910bb0e90e6d60e570c29",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scenario/transition.py": "2515dd5d824fac9c0d605bf62563198a3bcd1b8ce5d55714f19d3deccebe0c77",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scenario/vehicle.py": "27698660d8569baebb34e480aaef6504ffa596e9f39c918a2ff2d94ed53be25f",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/__init__.py": "087d78d0ead45912eb47c444572c54c9abee31c0f5a8df76aa60358cb653a905",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/asset.py": "0064903bdecdd2c9f15384648c9a4eb464845bc1f7737a7e3ef1d1315bcfc350",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/border_feature.py": "af7875d09ce25dad80e9f78a29536b6b3e74625f9c9cfe20be21609e4971b1b3",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/checkerboard.py": "ceb608e9e49143d1e6c4ab986af06e0cecfe050a90bcc4acf8a699f1a6c4b694",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/connection_point.py": "be9c779a02621b378a61ddc27911eab7f308387a27bf667b46358919d7bbc5fb",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/element.py": "979590d92f1597bcee51fbd9d8fb042a6719fb9102abbe827ec1a2df49f11ca7",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/infrastructure.py": "49a8d06a00d124315a874b3f96501afed5cf8d32bacf63351c196bccd9a059c3",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/junction.py": "bb25f6f3cca75c3a51e53b6ecbc6293dc1d2fda1f203b36fbe43656cc84b5938",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/lane.py": "1f4c7976128139e98fdfc1d33bda3a57a89862e11740d972d357470b147656bb",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/obstacle.py": "b7895d3999711ce4e97d9a88731d93758fd39c83f7634a1968aebdd4f3f8a4ac",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/off_road_element.py": "84c85291df049a551047a9a9e0608fb4c5ea4ca30ffacdffe4b8605dffbfca63",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/off_road_surface.py": "1cc4c4cdaae5679530f87ae789ac266e7045ca4b6796298adca6c34a8ba5bfea",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/oriented_point.py": "154fb241b8aaba2a73897a3a00b6fbc9451d7fe36bdacfda7857fcd7b10a2116",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/path_feature.py": "66388dc12cafeb49c4d28fe112ad487511644dff36fc4074371482050b79b008",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/road.py": "1be77ec8b53945f6c9721a842f501781cdcd491f1f23fb5046d774c3654c2b6f",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/road_network.py": "709a8426017c63f05e147f756b7059386c6f9a1e23fcbbaa02737e60c5dce8f3",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/road_segment.py": "b8ff9f5d7f80d1b7f9e70c7aa1d395d0c9ea9ad215f8b10ad0832af4087ef1b5",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/scene.py": "afd1214db6b6b2c24954bb9b5ca60fec7af9f4baad90d064b5ac30eb49bc3fab",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/shoulder.py": "2d2d648bb72b21ceeb203e5cfd943cf4edb698f611dcac8dfa7f0b1cce616804",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/side_walk.py": "fb22ff1176c5fdb4dcbffba7c5c99285edfba6099ac3aaedd55ec65cfd04bff9",
+    "json-coverter/skills/case-conversion/scripts/pydantic_classes/scene/terrain_patch.py": "4c7537beae90cb49ea9de6d44266ae643acdbecdc59f0433c29a522762583cad",
+    "json-coverter/skills/case-conversion/scripts/scenes/highway/convert.py": "28b203496fe22f1e648cdee59953a887111d635d27e34098699461225d79e08f",
+    "json-coverter/skills/case-conversion/scripts/scenes/intersection/convert.py": "94bcdfe7c8f3850ca34df21cb0743f29259462805409a675f6ef3df388ef7381",
+    "json-coverter/skills/case-conversion/scripts/tests/test_lane_markings.py": "12cf5f48ff1803c380a4d318c087c9a1a8740856484c0301c8b8be5804bcbe09",
+    "json-coverter/skills/case-conversion/scripts/validate_server.py": "d4bef4222332e2f581a62fb0fceea68f32ba05a085e51b96224bfd59ba488534"
+  }
+}

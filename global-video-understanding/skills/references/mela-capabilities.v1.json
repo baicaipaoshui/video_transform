@@ -1,0 +1,34 @@
+{
+  "manifest_version": "mela-capabilities.v1",
+  "audited_at": "2026-09-04",
+  "gate_mode": "manifest_contract",
+  "runtime_source_required": false,
+  "road_sources": ["preview_json", "external_xodr"],
+  "audit_provenance": {
+    "method": "static_source_review",
+    "source_hashes": {
+      "intersection_with_signals.py": "3a941fa7d10a2e99be8fd8f939a6724f2239cb896c40d3d3ba1c04953e7c2e74",
+      "mela2mancera_preview_convert.py": "4903be51920b83f6b5dde859f7292bf8111ca16739dc2bbd106ef5ac49094746",
+      "openx_service.py": "114f0d55962258e537a024a7cb6007bfd10b9ab43265c6b64c1ba1959b5f2b70",
+      "roundabout.py": "b1d6341dac8b9a66bd8db51fb48ec5b50f7a8cdbe804b7d91881b7d8c0c36aa5",
+      "scenarios.py": "2f97c69fe0ce0691a6745d4b8571d6846d9adf251fc23b7d998f5d7345ac20a3",
+      "trajectory_with_objects.py": "ae01b4ec8139e439126e70428e5e4eb58f932383f4cdec5a34c813c240eeaba2"
+    }
+  },
+  "workflows": {
+    "preview_json": {"scene_types": ["highway", "intersection"], "actor_types": ["vehicle", "pedestrian"], "lane_types": ["driving", "shoulder", "sidewalk"], "parking_representation": "paved_shoulder", "verification": "source_verified"},
+    "external_xodr": {"scene_types": ["highway", "intersection"], "actor_types": ["vehicle", "pedestrian"], "road_geometry": "external", "verification": "pending_probe"}
+  },
+  "degradations": {
+    "intersection_approximation": {"impact_domains": ["road_topology", "road_geometry", "executor_primitive", "environment"], "verification": "source_verified"},
+    "parking_as_paved_shoulder": {"impact_domains": ["roadside_representation"], "verification": "source_verified"},
+    "sidewalk_as_paved_shoulder": {"impact_domains": ["roadside_representation"], "verification": "source_verified"},
+    "weather_not_applied_downstream": {"impact_domains": ["environment"], "verification": "source_verified"},
+    "straight_preview_policy_default": {"impact_domains": ["executor_primitive"], "verification": "source_verified"},
+    "road_length_policy_default": {"impact_domains": ["road_geometry"], "verification": "source_verified"},
+    "driving_lane_width_policy_default": {"impact_domains": ["lane_geometry"], "verification": "source_verified"},
+    "parking_width_policy_default": {"impact_domains": ["roadside_geometry"], "verification": "source_verified"},
+    "single_lane_topology_placeholder": {"impact_domains": ["road_topology"], "verification": "unsupported_for_publish"}
+  },
+  "render_runner": {"available": false, "verification": "not_executed"}
+}

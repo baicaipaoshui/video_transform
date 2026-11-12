@@ -1,0 +1,12 @@
+{
+  "frame": "Video-start ego frame, fixed origin: +x forward, +y left. No GPS or compass required. 固定视频起始自车坐标系：x 向前，y 向左。",
+  "heading_rad": "Road reference-line angle: 0 along +x, pi/2 along +y. incoming points toward the junction; outgoing/bidirectional point away. heading_rad 是参考线方向，不是路臂所在方位；incoming 指向路口，outgoing/bidirectional 指向路口外。",
+  "arm_bearing": "Physical arm bearing is heading_rad + pi for incoming, heading_rad otherwise (modulo 2*pi). 不同物理路臂不得重叠；未知角色或朝向保留 null，不从未知值计算已知方位。",
+  "example": "直行自车入口和远侧直行出口的 heading_rad 都为 0；入口路臂方位为 pi，出口路臂方位为 0，二者在路口两侧。不可因为近侧路臂向后延伸就把 incoming 的 heading_rad 写成 pi。",
+  "examples": [
+    {"description": "自车近侧入口", "road_role": "incoming", "heading_rad": 0.0, "arm_bearing_rad": 3.141592653589793},
+    {"description": "远侧直行出口", "road_role": "outgoing", "heading_rad": 0.0, "arm_bearing_rad": 0.0},
+    {"description": "左侧出口", "road_role": "outgoing", "heading_rad": 1.5707963267948966, "arm_bearing_rad": 1.5707963267948966},
+    {"description": "右侧入口", "road_role": "incoming", "heading_rad": 1.5707963267948966, "arm_bearing_rad": 4.71238898038469}
+  ]
+}

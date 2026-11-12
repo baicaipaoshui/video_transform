@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "type": "object", "additionalProperties": false,
+    "required": ["event_id", "status", "evidence_frame_ids"],
+    "properties": {
+      "event_id": {"type": "string"},
+      "status": {"enum": ["confirmed", "uncertain", "conflicting"]},
+      "evidence_frame_ids": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string"}}
+    }
+  },
+  "x-event-motion-states": {
+    "vehicle_deceleration": "decelerating", "ego_deceleration": "decelerating", "decelerate": "decelerating",
+    "vehicle_acceleration": "accelerating", "ego_acceleration": "accelerating", "accelerate": "accelerating",
+    "vehicle_stop": "stopped", "ego_stop": "stopped", "stop": "stopped"
+  }
+}

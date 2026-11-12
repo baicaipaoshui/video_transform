@@ -1,0 +1,32 @@
+{
+  "schema_version": "workspace-skill-manifest.v1",
+  "version": 1792404245714,
+  "skills": {
+    "video-scene-analysis": {
+      "enabled": true,
+      "channels": [
+        "all"
+      ],
+      "source": "customized",
+      "metadata": {
+        "name": "video-scene-analysis",
+        "description": "处理一个冻结的视频 Batch，回答分配的问题并提交证据、结构化 World conflict 和累计 Actor registry。",
+        "version_text": "",
+        "emoji": "",
+        "commit_text": "",
+        "source": "customized",
+        "protected": false,
+        "requirements": {
+          "require_bins": [],
+          "require_envs": []
+        },
+        "updated_at": "2026-10-19T10:02:37.571290Z"
+      },
+      "requirements": {
+        "require_bins": [],
+        "require_envs": []
+      },
+      "updated_at": "2026-10-19T10:02:37.571290Z"
+    }
+  }
+}

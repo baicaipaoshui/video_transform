@@ -1,0 +1,667 @@
+{
+    "scene": {
+        "id": "8b15f315-469e-4bc1-b326-463fb4e0c8dc",
+        "name": "Auto f\u00e4hrt auf Kreuzung mit Ampel, biegt rechts und dann links ab",
+        "type": "intersection",
+        "description": "Das Auto f\u00e4hrt auf einer geraden Strecke auf eine Kreuzung zu mit einer Ampel. Da biegt es rechts ab auf die n\u00e4chste Kreuzung. Dort biegt das Auto links ab.",
+        "road_network": {
+            "id": "fce1e82e-7d0e-4793-a907-8f0137d7bab2",
+            "parent_id": "8b15f315-469e-4bc1-b326-463fb4e0c8dc",
+            "name": "Scenario 1 Road Network",
+            "description": "Das Auto f\u00e4hrt auf einer geraden Strecke auf eine Kreuzung zu mit einer Ampel. Da biegt es rechts ab auf die n\u00e4chste Kreuzung. Dort biegt das Auto links ab.",
+            "traffic_type": "right_hand_traffic",
+            "country": "germany",
+            "roads": [
+                {
+                    "id": "97cbe751-6626-45cb-be9c-4ecfc548ba32",
+                    "name": "Road_1",
+                    "description": "southern approach, initial straight road with ego vehicle approaching the first intersection, right hand traffic",
+                    "parent_id": "fce1e82e-7d0e-4793-a907-8f0137d7bab2",
+                    "connection_points": {},
+                    "segments": [
+                        {
+                            "id": "d0e5c3a6-95d8-4420-904e-ef62b73848e8",
+                            "parent_id": "97cbe751-6626-45cb-be9c-4ecfc548ba32",
+                            "name": "Road_1_Seg_1",
+                            "description": "First segment, southern entry taper straight road segment, 200 m, ego vehicle approaching intersection, right-hand-traffic.",
+                            "order_index": 0,
+                            "length": 200.0,
+                            "shape_type": "straight",
+                            "road_radius": null,
+                            "lanes": [
+                                {
+                                    "id": "579d48da-b398-427f-af45-b8784e9adc93",
+                                    "parent_id": "d0e5c3a6-95d8-4420-904e-ef62b73848e8",
+                                    "name": "Road_1_Seg_1_Lane_1",
+                                    "description": "right-most forward driving lane, straight segment approach",
+                                    "index": 0,
+                                    "width": 3.5,
+                                    "type": "driving",
+                                    "direction": "forward",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "right"
+                                    ],
+                                    "left_lane_marking_type": "solid",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "solid",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "8aeb2325-17e3-4378-be8b-32b0b268f33b",
+                                    "parent_id": "d0e5c3a6-95d8-4420-904e-ef62b73848e8",
+                                    "name": "Road_1_Seg_1_Lane_2",
+                                    "description": "left-most backward driving lane, straight segment approach",
+                                    "index": 1,
+                                    "width": 3.5,
+                                    "type": "driving",
+                                    "direction": "backward",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "left"
+                                    ],
+                                    "left_lane_marking_type": "solid",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "solid",
+                                    "right_lane_marking_color": "white"
+                                }
+                            ],
+                            "left_shoulder": null,
+                            "right_shoulder": null,
+                            "left_sidewalk": null,
+                            "right_sidewalk": null
+                        }
+                    ],
+                    "length": 200.0
+                },
+                {
+                    "id": "7667193f-e849-4203-83fe-577c6e33ad1d",
+                    "name": "Road_2",
+                    "description": "western approach, road intersecting at the first junction, right hand traffic",
+                    "parent_id": "fce1e82e-7d0e-4793-a907-8f0137d7bab2",
+                    "connection_points": {},
+                    "segments": [
+                        {
+                            "id": "efea9eb0-c4ed-48a6-93c7-3b5d0cc1d4b8",
+                            "parent_id": "7667193f-e849-4203-83fe-577c6e33ad1d",
+                            "name": "Road_2_Seg_1",
+                            "description": "first segment, western entry straight road segment leading out from the junction, 200 m length, right-hand traffic.",
+                            "order_index": 0,
+                            "length": 200.0,
+                            "shape_type": "straight",
+                            "road_radius": null,
+                            "lanes": [
+                                {
+                                    "id": "1363ddee-86da-4824-8efe-17f6c544f6ca",
+                                    "parent_id": "efea9eb0-c4ed-48a6-93c7-3b5d0cc1d4b8",
+                                    "name": "Road_2_Seg_1_Lane_1",
+                                    "description": "right-most forward driving lane on straight segment, entry from junction",
+                                    "index": 0,
+                                    "width": 3.5,
+                                    "type": "driving",
+                                    "direction": "forward",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "right"
+                                    ],
+                                    "left_lane_marking_type": "dashed",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "solid",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "0a84db0c-e911-4d32-aec7-d756b58fe463",
+                                    "parent_id": "efea9eb0-c4ed-48a6-93c7-3b5d0cc1d4b8",
+                                    "name": "Road_2_Seg_1_Lane_2",
+                                    "description": "left-most backward driving lane on straight segment, exit toward junction",
+                                    "index": 1,
+                                    "width": 3.5,
+                                    "type": "driving",
+                                    "direction": "backward",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "left"
+                                    ],
+                                    "left_lane_marking_type": "solid",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                }
+                            ],
+                            "left_shoulder": null,
+                            "right_shoulder": null,
+                            "left_sidewalk": null,
+                            "right_sidewalk": null
+                        }
+                    ],
+                    "length": 200.0
+                },
+                {
+                    "id": "22239f2c-101e-47f1-b587-2290cb87a113",
+                    "name": "Road_3",
+                    "description": "northern approach, road continuing straight through the first junction, right hand traffic",
+                    "parent_id": "fce1e82e-7d0e-4793-a907-8f0137d7bab2",
+                    "connection_points": {},
+                    "segments": [
+                        {
+                            "id": "e4e3b48a-64cf-47fc-adef-0af16edd1b00",
+                            "parent_id": "22239f2c-101e-47f1-b587-2290cb87a113",
+                            "name": "Road_3_Seg_1",
+                            "description": "First segment, northern exit straight road segment after the first junction, 200 m, right-hand traffic.",
+                            "order_index": 0,
+                            "length": 200.0,
+                            "shape_type": "straight",
+                            "road_radius": null,
+                            "lanes": [
+                                {
+                                    "id": "e7fbc4e1-cd92-412d-af3f-843b5a07be69",
+                                    "parent_id": "e4e3b48a-64cf-47fc-adef-0af16edd1b00",
+                                    "name": "Road_3_Seg_1_Lane_1",
+                                    "description": "Right-most forward driving lane on straight segment.",
+                                    "index": 0,
+                                    "width": 3.5,
+                                    "type": "driving",
+                                    "direction": "forward",
+                                    "allowed_maneuvers": [
+                                        "straight"
+                                    ],
+                                    "left_lane_marking_type": "dashed",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "solid",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "14fa39c9-e26a-49a8-9076-2b062d0d77b2",
+                                    "parent_id": "e4e3b48a-64cf-47fc-adef-0af16edd1b00",
+                                    "name": "Road_3_Seg_1_Lane_2",
+                                    "description": "Right-most backward driving lane on straight segment.",
+                                    "index": 1,
+                                    "width": 3.5,
+                                    "type": "driving",
+                                    "direction": "backward",
+                                    "allowed_maneuvers": [
+                                        "straight"
+                                    ],
+                                    "left_lane_marking_type": "solid",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                }
+                            ],
+                            "left_shoulder": null,
+                            "right_shoulder": null,
+                            "left_sidewalk": null,
+                            "right_sidewalk": null
+                        }
+                    ],
+                    "length": 200.0
+                },
+                {
+                    "id": "db8506bb-7d90-4ee0-8791-6791445f25c1",
+                    "name": "Road_4",
+                    "description": "eastern approach, road where ego vehicle turns right at the first junction and continues to the second junction, right hand traffic",
+                    "parent_id": "fce1e82e-7d0e-4793-a907-8f0137d7bab2",
+                    "connection_points": {},
+                    "segments": [
+                        {
+                            "id": "72bc6604-1a1f-4415-9042-05d21b4e5539",
+                            "parent_id": "db8506bb-7d90-4ee0-8791-6791445f25c1",
+                            "name": "Road_4_Seg_1",
+                            "description": "first segment, eastern entry straight road segment after right turn from junction, 200 m length, right-hand-traffic",
+                            "order_index": 0,
+                            "length": 200.0,
+                            "shape_type": "straight",
+                            "road_radius": null,
+                            "lanes": [
+                                {
+                                    "id": "01584165-c14f-4ada-a391-9aee94d4600f",
+                                    "parent_id": "72bc6604-1a1f-4415-9042-05d21b4e5539",
+                                    "name": "Road_4_Seg_1_Lane_1",
+                                    "description": "Right-most forward driving lane on straight segment.",
+                                    "index": 0,
+                                    "width": 3.5,
+                                    "type": "driving",
+                                    "direction": "forward",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "right"
+                                    ],
+                                    "left_lane_marking_type": "dashed",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "solid",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "3bfb8517-bd65-4f32-8c08-c438ad43c25b",
+                                    "parent_id": "72bc6604-1a1f-4415-9042-05d21b4e5539",
+                                    "name": "Road_4_Seg_1_Lane_2",
+                                    "description": "Right-most backward driving lane on straight segment.",
+                                    "index": 1,
+                                    "width": 3.5,
+                                    "type": "driving",
+                                    "direction": "backward",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "left"
+                                    ],
+                                    "left_lane_marking_type": "solid",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                }
+                            ],
+                            "left_shoulder": null,
+                            "right_shoulder": null,
+                            "left_sidewalk": null,
+                            "right_sidewalk": null
+                        }
+                    ],
+                    "length": 200.0
+                },
+                {
+                    "id": "3ab01367-8110-47fa-8100-ccad9431469e",
+                    "name": "Road_5",
+                    "description": "northern approach at the second junction, road where ego vehicle turns left from the eastern approach, right hand traffic",
+                    "parent_id": "fce1e82e-7d0e-4793-a907-8f0137d7bab2",
+                    "connection_points": {},
+                    "segments": [
+                        {
+                            "id": "f027e141-3b45-4d99-a0fd-d7e9cec3d278",
+                            "parent_id": "3ab01367-8110-47fa-8100-ccad9431469e",
+                            "name": "Road_5_Seg_1",
+                            "description": "First segment, northern approach straight road segment, 200 m, likely with standard lane configuration, right-hand-traffic.",
+                            "order_index": 0,
+                            "length": 200.0,
+                            "shape_type": "straight",
+                            "road_radius": null,
+                            "lanes": [
+                                {
+                                    "id": "a4911654-e21e-4e08-bf44-830d622f47e2",
+                                    "parent_id": "f027e141-3b45-4d99-a0fd-d7e9cec3d278",
+                                    "name": "Road_5_Seg_1_Lane_1",
+                                    "description": "Right-most forward driving lane on straight northern approach.",
+                                    "index": 0,
+                                    "width": 3.5,
+                                    "type": "driving",
+                                    "direction": "forward",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "right"
+                                    ],
+                                    "left_lane_marking_type": "dashed",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "solid",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "02eb0764-adc6-419d-b8c1-7f04eaa695b1",
+                                    "parent_id": "f027e141-3b45-4d99-a0fd-d7e9cec3d278",
+                                    "name": "Road_5_Seg_1_Lane_2",
+                                    "description": "Left forward driving lane on straight northern approach.",
+                                    "index": 1,
+                                    "width": 3.5,
+                                    "type": "driving",
+                                    "direction": "forward",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "left"
+                                    ],
+                                    "left_lane_marking_type": "solid",
+                                    "left_lane_marking_color": "yellow",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "6abc71c7-cb3c-47bd-a4d5-9a022aacfa27",
+                                    "parent_id": "f027e141-3b45-4d99-a0fd-d7e9cec3d278",
+                                    "name": "Road_5_Seg_1_Lane_3",
+                                    "description": "Left-most backward driving lane on straight northern approach.",
+                                    "index": 2,
+                                    "width": 3.5,
+                                    "type": "driving",
+                                    "direction": "backward",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "left"
+                                    ],
+                                    "left_lane_marking_type": "dashed",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "solid",
+                                    "right_lane_marking_color": "yellow"
+                                },
+                                {
+                                    "id": "5c3245e6-e005-4ce3-b24b-f2a6e77d47b0",
+                                    "parent_id": "f027e141-3b45-4d99-a0fd-d7e9cec3d278",
+                                    "name": "Road_5_Seg_1_Lane_4",
+                                    "description": "Right backward driving lane on straight northern approach.",
+                                    "index": 3,
+                                    "width": 3.5,
+                                    "type": "driving",
+                                    "direction": "backward",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "right"
+                                    ],
+                                    "left_lane_marking_type": "solid",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                }
+                            ],
+                            "left_shoulder": null,
+                            "right_shoulder": null,
+                            "left_sidewalk": null,
+                            "right_sidewalk": null
+                        }
+                    ],
+                    "length": 200.0
+                },
+                {
+                    "id": "8658007b-0c12-4d77-8362-110537b8ec94",
+                    "name": "Road_6",
+                    "description": "eastern approach at the second junction, continuation of the road after the right turn, right hand traffic",
+                    "parent_id": "fce1e82e-7d0e-4793-a907-8f0137d7bab2",
+                    "connection_points": {},
+                    "segments": [
+                        {
+                            "id": "f10e67a4-8eaf-4287-9aa3-1d77bb2aeb9a",
+                            "parent_id": "8658007b-0c12-4d77-8362-110537b8ec94",
+                            "name": "Road_6_Seg_1",
+                            "description": "first segment, eastern entry straight road segment after right turn at second junction, 200 m, right-hand-traffic.",
+                            "order_index": 0,
+                            "length": 200.0,
+                            "shape_type": "straight",
+                            "road_radius": null,
+                            "lanes": [
+                                {
+                                    "id": "70abbc22-0330-4ec1-bcfa-441c713c5475",
+                                    "parent_id": "f10e67a4-8eaf-4287-9aa3-1d77bb2aeb9a",
+                                    "name": "Road_6_Seg_1_Lane_1",
+                                    "description": "Right-most forward driving lane on straight segment.",
+                                    "index": 0,
+                                    "width": 3.5,
+                                    "type": "driving",
+                                    "direction": "forward",
+                                    "allowed_maneuvers": [
+                                        "straight"
+                                    ],
+                                    "left_lane_marking_type": "dashed",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "solid",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "0f328140-8604-4cf4-a23c-eaf2dc79079e",
+                                    "parent_id": "f10e67a4-8eaf-4287-9aa3-1d77bb2aeb9a",
+                                    "name": "Road_6_Seg_1_Lane_2",
+                                    "description": "Right-most backward driving lane on straight segment.",
+                                    "index": 1,
+                                    "width": 3.5,
+                                    "type": "driving",
+                                    "direction": "backward",
+                                    "allowed_maneuvers": [
+                                        "straight"
+                                    ],
+                                    "left_lane_marking_type": "solid",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                }
+                            ],
+                            "left_shoulder": null,
+                            "right_shoulder": null,
+                            "left_sidewalk": null,
+                            "right_sidewalk": null
+                        }
+                    ],
+                    "length": 200.0
+                }
+            ],
+            "junctions": [
+                {
+                    "id": "7d9dad87-c365-4aee-bea4-212b56f8b7fa",
+                    "name": "Junction_1",
+                    "description": "First intersection with a traffic light connecting south, west, north, and east roads",
+                    "parent_id": "fce1e82e-7d0e-4793-a907-8f0137d7bab2",
+                    "connection_points": {
+                        "A": {
+                            "id": "e7e8342b-a2f3-4e5c-b7de-9f42c0ca1410",
+                            "element_ids": [
+                                "7d9dad87-c365-4aee-bea4-212b56f8b7fa"
+                            ],
+                            "positions": {
+                                "7d9dad87-c365-4aee-bea4-212b56f8b7fa": "A"
+                            }
+                        },
+                        "B": {
+                            "id": "86074b8c-1056-4de1-a7b4-8b4c8bc74dfa",
+                            "element_ids": [
+                                "7d9dad87-c365-4aee-bea4-212b56f8b7fa"
+                            ],
+                            "positions": {
+                                "7d9dad87-c365-4aee-bea4-212b56f8b7fa": "B"
+                            }
+                        },
+                        "C": {
+                            "id": "357828b1-74fc-4cf7-914a-3f6bb09688d0",
+                            "element_ids": [
+                                "7d9dad87-c365-4aee-bea4-212b56f8b7fa"
+                            ],
+                            "positions": {
+                                "7d9dad87-c365-4aee-bea4-212b56f8b7fa": "C"
+                            }
+                        },
+                        "D": {
+                            "id": "a93d2090-8f81-44e0-a2ce-8c2076a08386",
+                            "element_ids": [
+                                "7d9dad87-c365-4aee-bea4-212b56f8b7fa"
+                            ],
+                            "positions": {
+                                "7d9dad87-c365-4aee-bea4-212b56f8b7fa": "D"
+                            }
+                        },
+                        "N": {
+                            "id": "754b05db-b89c-4515-8b5b-4ca7dda8315f",
+                            "element_ids": [
+                                "7d9dad87-c365-4aee-bea4-212b56f8b7fa"
+                            ],
+                            "positions": {
+                                "7d9dad87-c365-4aee-bea4-212b56f8b7fa": "N"
+                            }
+                        },
+                        "E": {
+                            "id": "6accbf5a-41a1-432c-a118-e78f6eaeb716",
+                            "element_ids": [
+                                "7d9dad87-c365-4aee-bea4-212b56f8b7fa"
+                            ],
+                            "positions": {
+                                "7d9dad87-c365-4aee-bea4-212b56f8b7fa": "E"
+                            }
+                        },
+                        "S": {
+                            "id": "9d3ba11e-0248-4921-9da6-8e6d3e032e58",
+                            "element_ids": [
+                                "7d9dad87-c365-4aee-bea4-212b56f8b7fa"
+                            ],
+                            "positions": {
+                                "7d9dad87-c365-4aee-bea4-212b56f8b7fa": "S"
+                            }
+                        },
+                        "W": {
+                            "id": "170a950e-19a0-49e9-beee-8778b1bb4d52",
+                            "element_ids": [
+                                "7d9dad87-c365-4aee-bea4-212b56f8b7fa"
+                            ],
+                            "positions": {
+                                "7d9dad87-c365-4aee-bea4-212b56f8b7fa": "W"
+                            }
+                        }
+                    },
+                    "type": "intersection",
+                    "num_connections": 6,
+                    "cardinal_positions": [
+                        "S",
+                        "W",
+                        "N",
+                        "E"
+                    ]
+                }
+            ]
+        },
+        "off_road_surface": null
+    },
+    "scenario": {
+        "id": "75b68d77-4b5b-45e3-9c93-227187acb580",
+        "name": "Scenario 1",
+        "description": null,
+        "scene_id": "8b15f315-469e-4bc1-b326-463fb4e0c8dc",
+        "vehicles": [
+            {
+                "id": "33cda259-2c37-4115-99b6-860901ec1026",
+                "name": "Vehicle_1",
+                "description": "Ego vehicle on Road_1_Seg_1_Lane_1, approaching Junction_1, right-most forward driving lane, straight segment, right hand traffic.",
+                "is_ego_actor": true,
+                "parent_id": "75b68d77-4b5b-45e3-9c93-227187acb580",
+                "tracking_id": null,
+                "timeline": [
+                    {
+                        "id": "0fc64731-52f9-4d10-b833-56d3ee9bfee7",
+                        "name": "Approach Junction_1",
+                        "description": "Drive straight towards the first intersection.",
+                        "parent_id": "33cda259-2c37-4115-99b6-860901ec1026",
+                        "type": "drive_straight",
+                        "action": {
+                            "id": "a007b1ca-4954-47b3-9bc6-50a0a41881db",
+                            "direction": "forward",
+                            "start_position": {
+                                "position": {
+                                    "reference_name": "Road_1_Seg_1_Lane_1",
+                                    "longitudinal_specifier": "ahead_of",
+                                    "longitudinal_value": 0.0,
+                                    "longitudinal_unit": "m",
+                                    "lateral_specifier": "right_of",
+                                    "lateral_value": 0.0,
+                                    "lateral_unit": "lane"
+                                },
+                                "orientation": {
+                                    "reference_name": "Road_1_Seg_1_Lane_1",
+                                    "specifier": "facing_towards",
+                                    "offset_angle": 0.0
+                                }
+                            },
+                            "start_longitudinal_velocity": 30.0,
+                            "start_lateral_velocity": 0.0,
+                            "end_longitudinal_velocity": 30.0,
+                            "turning_angle": 0.0,
+                            "acceleration": 0.0
+                        },
+                        "transition": {
+                            "id": "826eeaf8-3a4c-4477-8e31-4c22db61aac5",
+                            "reference_name": "Road_1_Seg_1_Lane_1",
+                            "type": "traveled_distance",
+                            "value": 200.0
+                        }
+                    },
+                    {
+                        "id": "2d81a131-5f55-47d1-8475-590e5b4e40a4",
+                        "name": "Turn right at Junction_1",
+                        "description": "Right turn from Road_1_Seg_1_Lane_1 onto Road_4_Seg_1_Lane_1.",
+                        "parent_id": "33cda259-2c37-4115-99b6-860901ec1026",
+                        "type": "turn_right",
+                        "action": {
+                            "id": "58ba0add-5762-4805-be89-2b38b5ca91d8",
+                            "direction": "right",
+                            "start_position": null,
+                            "start_longitudinal_velocity": 15.0,
+                            "start_lateral_velocity": 0.0,
+                            "end_longitudinal_velocity": 15.0,
+                            "turning_angle": 90.0,
+                            "acceleration": 0.0
+                        },
+                        "transition": {
+                            "id": "4dbee15c-682b-4318-a527-b687737315c2",
+                            "reference_name": "Road_4_Seg_1_Lane_1",
+                            "type": "traveled_distance",
+                            "value": 200.0
+                        }
+                    },
+                    {
+                        "id": "e494f6b6-30ba-4e45-a613-391053e1a04c",
+                        "name": "Turn left at Junction_2",
+                        "description": "Left turn from Road_4_Seg_1_Lane_1 onto Road_5_Seg_1_Lane_1.",
+                        "parent_id": "33cda259-2c37-4115-99b6-860901ec1026",
+                        "type": "turn_left",
+                        "action": {
+                            "id": "39b87500-e12e-4406-8039-599246b1a92e",
+                            "direction": "left",
+                            "start_position": null,
+                            "start_longitudinal_velocity": 15.0,
+                            "start_lateral_velocity": 0.0,
+                            "end_longitudinal_velocity": 15.0,
+                            "turning_angle": 90.0,
+                            "acceleration": 0.0
+                        },
+                        "transition": {
+                            "id": "a528b503-3bb3-438d-a1c0-34562c8b132d",
+                            "reference_name": "Road_5_Seg_1_Lane_1",
+                            "type": "traveled_distance",
+                            "value": 200.0
+                        }
+                    }
+                ],
+                "vehicle_class": "sedan",
+                "color": "silver"
+            }
+        ],
+        "pedestrians": [],
+        "animals": []
+    },
+    "entities": {
+        "id": "99e3d876-9625-4d79-ad9f-13c020aaa7e0",
+        "scene_id": "8b15f315-469e-4bc1-b326-463fb4e0c8dc",
+        "assets": [],
+        "traffic_lights": [
+            {
+                "id": "533ffe4e-a393-4861-8096-ed3cb7c0497b",
+                "parent_id": "99e3d876-9625-4d79-ad9f-13c020aaa7e0",
+                "name": "TrafficLight_1",
+                "description": "traffic light at the first intersection on the right side of Road_1_Seg_1_Lane_1",
+                "type": "traffic_light",
+                "pose": {
+                    "position": {
+                        "reference_name": "Road_1_Seg_1_Lane_1",
+                        "longitudinal_specifier": "ahead_of",
+                        "longitudinal_value": 200.0,
+                        "longitudinal_unit": "m",
+                        "lateral_specifier": "right_of",
+                        "lateral_value": 0.5,
+                        "lateral_unit": "m"
+                    },
+                    "orientation": {
+                        "reference_name": "Road_1_Seg_1_Lane_1",
+                        "specifier": "facing_towards",
+                        "offset_angle": 0.0
+                    }
+                },
+                "color": "red",
+                "duration": 20.0,
+                "mode": "on",
+                "shape": "circle",
+                "structure_type": "Vertical_3spots"
+            }
+        ],
+        "traffic_signs": [],
+        "crosswalks": []
+    },
+    "environment": {
+        "id": "6c477e81-b777-4036-8ebf-3eeae4e1c2cd",
+        "name": "Kreuzung mit Ampel und Abbiegen",
+        "description": "Das Auto f\u00e4hrt auf einer geraden Strecke auf eine Kreuzung zu mit einer Ampel. Da biegt es rechts ab auf die n\u00e4chste Kreuzung. Dort biegt das Auto links ab",
+        "scene_id": "8b15f315-469e-4bc1-b326-463fb4e0c8dc",
+        "daytime": "afternoon",
+        "sun_position": "in_front_of_ego",
+        "weather": "clear",
+        "topology": "flat",
+        "season": "summer"
+    }
+}

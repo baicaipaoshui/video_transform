@@ -1,0 +1,32 @@
+{
+  "schema_version": "workspace-skill-manifest.v1",
+  "version": 1793089724181,
+  "skills": {
+    "case-conversion": {
+      "enabled": true,
+      "channels": [
+        "all"
+      ],
+      "source": "customized",
+      "metadata": {
+        "name": "case-conversion",
+        "description": "确定性地将 analysis 转换为 MELA JSON；优先使用可用分析值，标准新 Case 按冻结策略自动补齐执行缺口并记录来源。",
+        "version_text": "",
+        "emoji": "",
+        "commit_text": "",
+        "source": "customized",
+        "protected": false,
+        "requirements": {
+          "require_bins": [],
+          "require_envs": []
+        },
+        "updated_at": "2026-10-20T06:17:23.927384Z"
+      },
+      "requirements": {
+        "require_bins": [],
+        "require_envs": []
+      },
+      "updated_at": "2026-10-20T06:17:23.927384Z"
+    }
+  }
+}

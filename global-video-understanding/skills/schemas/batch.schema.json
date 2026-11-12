@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "evidence": {
+      "type": "object", "required": ["status"], "not": {"required": ["kind"]},
+      "properties": {
+        "status": {"enum": ["observed", "estimated", "unknown"]},
+        "frame_id": {"type": "string", "minLength": 1}, "time_s": {"type": "number", "minimum": 0},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}, "reason": {"type": "string", "minLength": 1},
+        "actor_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      },
+      "allOf": [
+        {"if": {"properties": {"status": {"const": "observed"}}}, "then": {"anyOf": [{"required": ["frame_id"]}, {"required": ["time_s"]}]}},
+        {"if": {"properties": {"status": {"const": "estimated"}}}, "then": {"required": ["confidence"]}},
+        {"if": {"properties": {"status": {"const": "unknown"}}}, "then": {"required": ["reason"]}}
+      ], "additionalProperties": true
+    },
+    "actor": {
+      "type": "object", "required": ["actor_id", "actor_type", "first_seen_frame_id", "identity_description"],
+      "properties": {
+        "actor_id": {"type": "string", "minLength": 1}, "actor_type": {"type": "string", "minLength": 1},
+        "first_seen_frame_id": {"type": "string", "minLength": 1}, "identity_description": {"type": "string", "minLength": 1},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      }, "additionalProperties": true
+    }
+  },
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "case_id", "batch_id", "session_id", "observations", "challenges", "registry_after"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "case_id": {"pattern": "^case_(?:[0-9a-f]{16}|[0-9]{8}T[0-9]{9}Z_[0-9a-f]{8})$"},
+    "batch_id": {"pattern": "^batch_[0-9]{4}$"}, "session_id": {"type": "string", "minLength": 1},
+    "observations": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+    "challenges": {"type": "array", "items": {"type": "object"}},
+    "registry_after": {"type": "array", "items": {"$ref": "#/$defs/actor"}}
+  }
+}

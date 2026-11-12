@@ -1,0 +1,548 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path_contract_revision": {
+      "const": "intersection_path.v1"
+    },
+    "evidence_catalog_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "longitudinal_events": {
+      "$ref": "longitudinal_motion.schema.json"
+    },
+    "input_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "status": {
+      "enum": [
+        "accepted",
+        "needs_evidence"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "single_four_way": {
+      "type": "boolean"
+    },
+    "straight_only": {
+      "type": "boolean"
+    },
+    "arms": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "S": {
+          "type": "string",
+          "minLength": 1
+        },
+        "N": {
+          "type": "string",
+          "minLength": 1
+        },
+        "W": {
+          "type": "string",
+          "minLength": 1
+        },
+        "E": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "S",
+        "N",
+        "W",
+        "E"
+      ]
+    },
+    "actors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "actor_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "execution": {
+            "enum": [
+              "include",
+              "exclude"
+            ]
+          },
+          "incoming_lane_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "outgoing_lane_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "non_interacting": {
+            "type": "boolean"
+          },
+          "evidence_frame_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "context_frame_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "path_evidence_frame_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 12,
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          },
+          "entry_ordinal_from_right": {
+            "type": ["integer", "null"],
+            "minimum": 0
+          },
+          "exit_ordinal_from_right": {
+            "type": ["integer", "null"],
+            "minimum": 0
+          },
+          "lateral_motion": {
+            "enum": ["keeping", "changing_left", "changing_right", "unknown"]
+          },
+          "lateral_transition_interval_s": {
+            "type": ["array", "null"],
+            "items": {"type": "number", "minimum": 0},
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "path_witnesses": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["incoming", "junction", "outgoing"],
+            "properties": {
+              "incoming": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+              "junction": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+              "outgoing": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}}
+            }
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "actor_id",
+          "execution",
+          "incoming_lane_id",
+          "outgoing_lane_id",
+          "non_interacting",
+          "evidence_frame_ids",
+          "reason"
+        ]
+      }
+    },
+    "orders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "behind": {
+            "type": "string",
+            "minLength": 1
+          },
+          "ahead": {
+            "type": "string",
+            "minLength": 1
+          },
+          "trend": {
+            "enum": [
+              "steady",
+              "receding",
+              "approaching",
+              "unknown"
+            ]
+          },
+          "evidence_frame_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "behind",
+          "ahead",
+          "trend",
+          "evidence_frame_ids",
+          "reason"
+        ]
+      }
+    },
+    "parking": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "area_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "road_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "side": {
+            "enum": [
+              "left",
+              "right"
+            ]
+          },
+          "evidence_frame_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "area_id",
+          "road_id",
+          "side",
+          "evidence_frame_ids",
+          "reason"
+        ]
+      }
+    },
+    "crosswalks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "crosswalk_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "road_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence_frame_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "ego_relation_at_start": {
+            "enum": [
+              "ahead",
+              "behind",
+              "not_on_ego_path",
+              "unknown"
+            ]
+          },
+          "ego_crossing_interval_s": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "number",
+              "minimum": 0
+            },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "required": [
+          "crosswalk_id",
+          "road_id",
+          "evidence_frame_ids",
+          "reason"
+        ]
+      }
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "signal_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "road_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "state": {
+            "enum": [
+              "red",
+              "yellow",
+              "green",
+              "unknown"
+            ]
+          },
+          "control": {
+            "enum": [
+              "ego",
+              "conflicting",
+              "unknown"
+            ]
+          },
+          "evidence_frame_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "signal_id",
+          "road_id",
+          "state",
+          "control",
+          "evidence_frame_ids",
+          "reason"
+        ]
+      }
+    },
+    "covered_world_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "covered_limitation_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "exit_lane_continuity": {
+      "description": "For requests frozen with fact_contract_revision=observation-execution.v1, accepted reviews require same_order; validation is request-bound. Old requests retain their existing contract.",
+      "enum": [
+        "same_order",
+        "unknown"
+      ]
+    },
+    "world_challenges": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["challenge_id", "world_paths", "actor_ids", "evidence_frame_ids", "finding", "reason"],
+        "properties": {
+          "challenge_id": {"type": "string", "pattern": "^world_challenge_[0-9]{3}$"},
+          "world_paths": {"type": "array", "minItems": 1, "maxItems": 8, "uniqueItems": true, "items": {"type": "string", "pattern": "^(world|actor_hypotheses|questions_to_verify|ambiguities|field_evidence)(\\.|\\[)"}},
+          "actor_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "evidence_frame_ids": {"type": "array", "minItems": 1, "maxItems": 12, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "finding": {"enum": ["contradicted", "unsupported", "missing"]},
+          "reason": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "planning_revision": {
+      "const": "ego_scene_approximation.v1"
+    },
+    "lane_knowledge": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "count",
+          "anchors",
+          "evidence_frame_ids"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "exact",
+              "minimum",
+              "unknown"
+            ]
+          },
+          "count": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1
+          },
+          "anchors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "lane_id",
+                "ordinal_from_right",
+                "evidence_frame_ids"
+              ],
+              "properties": {
+                "lane_id": {
+                  "type": "string"
+                },
+                "ordinal_from_right": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "evidence_frame_ids": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "evidence_frame_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "exact",
+                    "minimum"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "count": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "limitation_bindings": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "limitation_binding.schema.json"
+      }
+    },
+    "dependency_bindings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "road_id",
+          "evidence_frame_ids",
+          "side"
+        ],
+        "properties": {
+          "kind": {
+            "const": "unused_roadside_side"
+          },
+          "road_id": {
+            "type": "string"
+          },
+          "evidence_frame_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "side": {
+            "enum": [
+              "left",
+              "right"
+            ]
+          }
+        }
+      }
+    },
+    "execution_entry_time_s": {
+      "type": "number",
+      "minimum": 0
+    },
+    "video_fidelity": {
+      "$ref": "video_fidelity.schema.json"
+    }
+  },
+  "required": [
+    "input_sha256",
+    "status",
+    "reason",
+    "single_four_way",
+    "straight_only",
+    "arms",
+    "actors",
+    "orders",
+    "parking",
+    "crosswalks",
+    "signals",
+    "covered_world_ids",
+    "covered_limitation_ids"
+  ]
+}

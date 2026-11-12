@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "revision",
+    "source_duration_s",
+    "observations"
+  ],
+  "properties": {
+    "revision": {
+      "const": "video_fidelity.v1"
+    },
+    "source_duration_s": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "x-unit": "s",
+      "x-source": "media_probe"
+    },
+    "observations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "actor_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "frame_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "lane_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "corridor": {
+            "enum": [
+              "ego",
+              "left_adjacent",
+              "right_adjacent",
+              "other",
+              "unknown"
+            ]
+          },
+          "junction_state": {
+            "enum": [
+              "before",
+              "inside",
+              "after",
+              "not_applicable",
+              "unknown"
+            ]
+          },
+          "motion_state": {
+            "enum": [
+              "moving",
+              "accelerating",
+              "decelerating",
+              "stopped",
+              "unknown"
+            ]
+          },
+          "ego_lane_ahead": {
+            "enum": [
+              "clear",
+              "occupied",
+              "unknown",
+              "not_applicable"
+            ],
+            "description": "Occupancy of the visible ego-lane corridor at this frame, always relative to ego regardless of the observation row actor_id. Occlusion is unknown, not clear."
+          },
+          "ahead_actor_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            },
+            "description": "Existing actor IDs visible ahead of ego in the ego lane at this frame, independent of the observation row actor_id. A lead vehicle may list itself; ego may never be listed. This is not the set of actors ahead of the row actor."
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "actor_id",
+          "frame_id",
+          "lane_id",
+          "corridor",
+          "junction_state",
+          "motion_state",
+          "ego_lane_ahead",
+          "ahead_actor_ids",
+          "reason"
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "video_fidelity_policy": {
+          "const": "video_fidelity.v1"
+        },
+        "parked_scenery_per_side": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 6
+        },
+        "parent_case_id": {
+          "type": "string",
+          "pattern": "^case_[A-Za-z0-9_]+$"
+        }
+      },
+      "required": [
+        "video_fidelity_policy"
+      ]
+    },
+    "longitudinal_event_type": {
+      "enum": [
+        "accelerate",
+        "decelerate",
+        "stop",
+        "speed_change",
+        "ego_acceleration",
+        "ego_deceleration",
+        "ego_stop"
+      ]
+    }
+  }
+}

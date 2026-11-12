@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "junction_membership": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["road_id"],
+      "x-adapter-version": "world-junction-membership.v1",
+      "x-legacy-string-field": "road_id",
+      "properties": {
+        "road_id": {"type": "string", "pattern": "^road_[0-9]{3}$"},
+        "lane_ids": {"type": ["array", "null"], "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^lane_[0-9]{3}$"},
+          "description": "Observed directional lane members only. Omit or use null when unknown; an empty array declares no members. Never infer all road lanes from road_id alone."}
+      }
+    },
+    "lane_connection": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Canonical observed lane connection. The four road/lane references are mandatory. maneuver remains optional only for already accepted legacy observations; new World candidates are instructed to provide it.",
+      "required": ["incoming_road_id", "incoming_lane_id", "outgoing_road_id", "outgoing_lane_id"],
+      "properties": {
+        "incoming_road_id": {"type": "string", "pattern": "^road_[0-9]{3}$"},
+        "incoming_lane_id": {"type": "string", "pattern": "^lane_[0-9]{3}$"},
+        "outgoing_road_id": {"type": "string", "pattern": "^road_[0-9]{3}$"},
+        "outgoing_lane_id": {"type": "string", "pattern": "^lane_[0-9]{3}$"},
+        "maneuver": {"enum": ["straight", "left", "right", "u_turn"]},
+        "evidence_frame_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "actor_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "evidence": {"type": "string", "minLength": 1},
+        "observed_by": {"type": "string", "minLength": 1},
+        "note": {"type": "string", "minLength": 1},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "junction": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "incoming_roads": {"type": ["array", "null"], "items": {"$ref": "#/$defs/junction_membership"}},
+        "outgoing_roads": {"type": ["array", "null"], "items": {"$ref": "#/$defs/junction_membership"}},
+        "lane_connections": {"type": ["array", "null"], "items": {"$ref": "#/$defs/lane_connection"}}
+      }
+    },
+    "identity_binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "actor_ids", "evidence_frame_ids"],
+      "properties": {
+        "kind": {"enum": ["unknown", "physically_separated_opposing"]},
+        "actor_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+        "evidence_frame_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "world_paths": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^world\\."}},
+    "observed_window": {
+      "type": "object", "additionalProperties": false,
+      "required": ["time_range_s", "lane_count_stable", "boundary_continuity", "no_merge_or_diverge", "no_junction_entry"],
+      "properties": {
+        "time_range_s": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+        "lane_count_stable": {"type": "boolean"},
+        "boundary_continuity": {"type": "boolean"},
+        "no_merge_or_diverge": {"type": "boolean"},
+        "no_junction_entry": {"type": "boolean"}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["status"],
+      "properties": {
+        "status": {"enum": ["observed", "estimated", "unknown"]},
+        "frame_id": {"type": "string", "minLength": 1},
+        "time_s": {"type": "number", "minimum": 0},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "reason": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {"if": {"properties": {"status": {"const": "observed"}}}, "then": {"anyOf": [{"required": ["frame_id"]}, {"required": ["time_s"]}]}},
+        {"if": {"properties": {"status": {"const": "estimated"}}}, "then": {"required": ["confidence"]}},
+        {"if": {"properties": {"status": {"const": "unknown"}}}, "then": {"required": ["reason"]}}
+      ]
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question_id", "question", "impact_domains", "resolution", "evidence"],
+      "properties": {
+        "question_id": {"pattern": "^question_[0-9]{3,}$"},
+        "actor_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "identity_binding": {"$ref": "#/$defs/identity_binding"},
+        "localization": {"type": "object", "additionalProperties": false, "required": ["road_id", "area_id", "attribute", "evidence_frame_ids"], "properties": {"road_id": {"type": "string"}, "area_id": {"type": "string"}, "attribute": {"type": "string", "minLength": 1}, "temporal_scope": {"const": "after_observed_window"}, "observed_window": {"$ref": "#/$defs/observed_window"}, "affected_x_range_m": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}}, "evidence_frame_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}}, "observed_corridor": {"type": "object", "additionalProperties": false, "required": ["time_range_s", "x_range_m", "lane_continuity", "boundary_continuity", "no_merge_or_diverge", "no_intrusion"], "properties": {"time_range_s": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}}, "x_range_m": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}}, "lane_continuity": {"type": ["boolean", "null"]}, "boundary_continuity": {"type": ["boolean", "null"]}, "no_merge_or_diverge": {"type": ["boolean", "null"]}, "no_intrusion": {"type": ["boolean", "null"]}}}}},
+        "world_paths": {"$ref": "#/$defs/world_paths"},
+        "related_world_paths": {"$ref": "#/$defs/world_paths"},
+        "question": {"type": "string", "minLength": 1},
+        "impact_domains": {"type": "array", "minItems": 1, "uniqueItems": true, "x-adapter-version": "world-impact-aliases.v1", "x-legacy-value-aliases": {"actor_state": "executor_primitive", "actor_motion": "executor_primitive"}, "items": {"enum": ["road_topology", "lane_count", "actor_set", "actor_identity", "actor_lane", "event_type", "event_order", "executor_primitive", "appearance", "report"]}},
+        "resolution": {"enum": ["unresolved", "resolved", "non_core"]},
+        "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}}
+      }
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "evidence_epoch", "world", "actor_hypotheses", "questions_to_verify", "ambiguities", "critical_intervals", "field_evidence"],
+  "properties": {
+    "contract_version": {"const": "video-case-world-behavior"},
+    "evidence_epoch": {"type": "integer", "minimum": 1},
+    "world": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["scene_type", "environment", "road"],
+      "properties": {
+        "scene_type": {"enum": ["highway", "intersection"]},
+        "environment": {"type": "object"},
+        "road": {
+          "type": "object",
+          "properties": {
+            "ego_direction_lanes": {"type":"integer","minimum":1},
+            "travel_lane_count": {"type":"integer","minimum":1,"description":"Legacy total travel-lane summary; not an alias for ego_direction_lanes."},
+            "lane_count_ego_direction": {"type":"integer","minimum":1,"description":"Legacy exact alias of ego_direction_lanes."},
+            "one_way": {"type":"boolean"},
+            "opposite_direction_lanes": {"type":["integer","null"],"minimum":0,"description":"Exact opposing travel-lane count, or null only when a bound unresolved World item and unknown field evidence preserve the unobservable count."},
+            "parking_lanes": {"type":"array","uniqueItems":true,"items":{"enum":["left","right"]}},
+            "roads": {"type":"array","items":{"type":"object","required":["road_id","lane_ids"],"properties":{
+              "road_id":{"type":"string","pattern":"^road_[0-9]{3}$"},"lane_ids":{"type":"array","description":"Identified lane IDs; an empty observation list does not assert zero physical lanes.","items":{"pattern":"^lane_[0-9]{3}$"}},
+              "lane_knowledge":{"type": "object", "additionalProperties": false, "required": ["kind", "count", "anchors", "evidence_frame_ids"], "properties": {"kind": {"enum": ["exact", "minimum", "unknown"]}, "count": {"type": ["integer", "null"], "minimum": 1}, "anchors": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["lane_id", "ordinal_from_right", "evidence_frame_ids"], "properties": {"lane_id": {"type": "string"}, "ordinal_from_right": {"type": "integer", "minimum": 0}, "evidence_frame_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}}}}}, "evidence_frame_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}}}, "allOf": [{"if": {"properties": {"kind": {"enum": ["exact", "minimum"]}}}, "then": {"properties": {"count": {"type": "integer"}}}}]},
+              "heading_rad":{"type":["number","null"]},
+              "road_role":{"description":"Known physical arm role, or null/omitted when unknown. Directional membership must remain consistent; never copy incoming lane IDs to invent outgoing lanes.","anyOf":[{"enum":["incoming","outgoing","bidirectional",null]},{"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["incoming","outgoing"]}}]},
+              "road_geometry":{"type":"object","properties":{"opposing_separation":{
+                "type":"object","additionalProperties":false,"required":["physically_separated","side"],
+                "properties":{"physically_separated":{"type":["boolean","null"]},"side":{"enum":["left","right","unknown"]}}}}}}}},
+            "lanes": {"type":"array","items":{"type":"object","required":["lane_id"],"properties":{
+              "lane_id":{"type":"string","pattern":"^lane_[0-9]{3}$"},"road_id":{"type":"string","pattern":"^road_[0-9]{3}$"}}}},
+            "lane_markings": {
+              "type":"array",
+              "description":"Observed lane-boundary markings. Use an empty array only when the evidence supports that no marking is visible.",
+              "items": {
+                "type":"object",
+                "properties": {
+                  "marking_id":{"type":"string","minLength":1},
+                  "marking_type":{},
+                  "type":{},
+                  "between":{"type":"array","minItems":2,"maxItems":2,"uniqueItems":true,"items":{"pattern":"^lane_[0-9]{3}$"}},
+                  "side":{"enum":["left","right"]},
+                  "lane_id":{"pattern":"^lane_[0-9]{3}$"},
+                  "road_id":{"pattern":"^road_[0-9]{3}$"},
+                  "location":{"type":"string","minLength":1}
+                },
+                "allOf": [
+                  {"anyOf":[{"required":["type"]},{"required":["marking_type"]}]},
+                  {"anyOf":[{"required":["marking_id"]},{"required":["between"]},{"required":["side"]},{"required":["location"]}]}
+                ],
+                "additionalProperties":true
+              }
+            },
+            "roadside_areas":{"type":"array","items":{"type":"object"}}
+          },
+          "allOf": [{
+            "if": {"anyOf":[{"required":["roads"]},{"required":["lanes"]}]},
+            "then": {"required":["roads","lanes","lane_markings"]}
+          }]
+        },
+        "junctions": {"type": "array", "items": {"$ref": "#/$defs/junction"}}
+      }
+    },
+    "actor_hypotheses": {"type": "array", "items": {"type": "object", "required": ["actor_id", "actor_type", "first_seen_frame_id", "identity_description"], "additionalProperties": true, "properties": {"actor_id": {"$ref": "actor_fields.schema.json#/$defs/actor_id"}, "actor_type": {"$ref": "actor_fields.schema.json#/$defs/actor_type"}, "vehicle_class": {"$ref": "actor_fields.schema.json#/$defs/vehicle_class"}, "identity_description": {"$ref": "actor_fields.schema.json#/$defs/identity_description"}, "first_seen_frame_id": {"$ref": "actor_fields.schema.json#/$defs/first_seen_frame_id"}, "hypothesized_lane": {"$ref": "actor_fields.schema.json#/$defs/lane_reference"}}}},
+    "questions_to_verify": {"type": "array", "items": {"$ref": "#/$defs/question"}},
+    "ambiguities": {"type": "array", "items": {"type": "object", "required": ["ambiguity_id", "impact_domains", "resolution"], "properties": {"localization": {"type": "object", "additionalProperties": false, "required": ["road_id", "area_id", "attribute", "evidence_frame_ids"], "properties": {"road_id": {"type": "string"}, "area_id": {"type": "string"}, "attribute": {"type": "string", "minLength": 1}, "temporal_scope": {"const": "after_observed_window"}, "observed_window": {"$ref": "#/$defs/observed_window"}, "affected_x_range_m": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}}, "evidence_frame_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}}, "observed_corridor": {"type": "object", "additionalProperties": false, "required": ["time_range_s", "x_range_m", "lane_continuity", "boundary_continuity", "no_merge_or_diverge", "no_intrusion"], "properties": {"time_range_s": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}}, "x_range_m": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}}, "lane_continuity": {"type": ["boolean", "null"]}, "boundary_continuity": {"type": ["boolean", "null"]}, "no_merge_or_diverge": {"type": ["boolean", "null"]}, "no_intrusion": {"type": ["boolean", "null"]}}}}},
+        "world_paths": {"$ref": "#/$defs/world_paths"},
+        "identity_binding": {"$ref": "#/$defs/identity_binding"},
+        "impact_domains": {"$ref": "#/$defs/question/properties/impact_domains"}, "resolution": {"$ref": "#/$defs/question/properties/resolution"},
+        "related_world_paths": {"$ref": "#/$defs/world_paths"}, "owner": {"enum": ["world", "behavior"]}, "subject_field": {"enum": ["road_topology", "lane_count", "actor_set", "actor_identity", "actor_lane", "actor_state", "actor_motion", "event_type", "event_order", "executor_primitive", "appearance", "report"]}}, "additionalProperties": true}},
+    "critical_intervals": {"type": "array", "items": {"type": "object", "required": ["start_s", "end_s"], "properties": {"start_s": {"type": "number", "minimum": 0}, "end_s": {"type": "number", "minimum": 0}, "question_ids": {"type": "array", "items": {"type": "string"}}, "ambiguity_ids": {"type": "array", "items": {"type": "string"}}}, "additionalProperties": true}},
+    "field_evidence": {"type": "object", "additionalProperties": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidence"}}}
+  }
+}

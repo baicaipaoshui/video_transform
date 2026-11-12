@@ -1,0 +1,36 @@
+# Intersection fact review
+
+当前任务为 intersection_review。只读 $request_path 与其中 frames 允许的图像；输出 $candidate_path，严格遵循 $schema_path。不读取历史 Case，不启动任何 session，不修改 World/Behavior。
+
+复核而非生成仿真：确认单四岔路口与直行路径，以自车入口S、直行出口N、左右W/E列出已存在的road_id。必须基于标线、边界和跨帧车辆连续性；不能因固定执行策略而声称事实已确认。
+
+actors 必须包含请求中每个actor且恰好一次。evidence_frame_ids 逐项等于 required_actor_evidence 中对应列表；context_frame_ids仍只解释出现/消失。对于 path_contract_revision=intersection_path.v1，另用 path_evidence_frame_ids 引用冻结证据目录内最多12帧；它可以包含Behavior轨迹未使用的3.5/4.0/4.5等上下文帧，并正式用于路径裁定，不新增Behavior轨迹点。逐车给出入口/出口ordinal_from_right、lateral_motion及可选变化区间；ordinal从道路最右外边界起以0编号，向左递增。路径连接必须分别给出incoming、junction、outgoing三段见证，远端横道之前或横道上不算outgoing见证。include仅用于有充分连续证据的运动汽车；source simulation_role为background不禁止纳入，Python只在独立执行视图提升角色。exclude仅用于当前观察窗口内有证据确定不影响参与者路径的background，给出non_interacting和理由。单帧横向斑马线行人不自动算无关；无法确定就返回needs_evidence。
+
+orders明确车辆前后顺序与steady/receding/approaching/unknown，特别是同车道的每对车辆；不能用actor编号猜顺序。parking完整覆盖World已有停车区域，核对area_id/road_id/side，不能扩散到其他道路。若Behavior已结构化确认静态车辆的road_id和parking_side，而相关帧还清楚证明World漏掉对应停车带，可用唯一路径`world.road.roadside_areas[-]`提出missing挑战；仅看到一辆路边静止车不能证明专用停车带。crosswalks/signals按画面逐项复核，不能静默省略可见设施；信号control说明相对自车的受控冲突关系。用户已授权变化灯色在Python执行副本中替换为全程绿灯，复核不得仅因状态变化返回needs_evidence或world_challenges；state仍填写实际证据支持的状态，不能把执行绿灯写成观察事实，多个状态无法归纳时可用unknown并在reason说明变化及证据。其他事实冲突仍返回needs_evidence。所有设施给出证据帧。
+
+covered_world_ids只能列出非自车入口道路的未观测车道数问题，表示执行近似适用，不表示事实resolved。covered_limitation_ids只能用于明确的绝对尺度或已证明不执行背景对象的影响。身份、主路径、事件或冲突未知不能覆盖。
+
+若出口只有一个unknown占位车道，而入口有多条车道，按每辆车分别裁定keeping、changing_left、changing_right或unknown。最多允许一辆运动汽车在路口内做一次相邻车道变化；changing必须有变化区间两端原图，非相邻变化、转弯、多车同时变道均返回needs_evidence。全部keeping时exit_lane_continuity=same_order；存在一个合法changing时为unknown但可由逐车合同继续；任何逐车unknown都返回needs_evidence。仍引用World现有占位outgoing_lane_id，不自行新建lane；Python只在出口车道证据全部unknown且相应未决项全部被覆盖时建立执行投影。已有observed一车道出口不能被扩展。
+
+如果复核发现World静态事实被帧证据反驳、缺少其宣称的见证，或证据明确支持Behavior所发现但World遗漏的停车区域，status必须为needs_evidence，并输出world_challenges：稳定challenge_id、精确World路径、关联actor、证据帧、contradicted|unsupported|missing和理由。missing仅允许`world.road.roadside_areas[-]`，不得借此追加道路、车道、Actor或其他设施。复核不得直接修改World；没有World事实问题时输出空数组。accepted不得携带world_challenges。
+
+不输出米制默认值、速度、目标JSON或修改后的世界。缺证输出status=needs_evidence及具体reason，仍满足Schema，绝不为了accepted强填事实。
+
+请求有 required_longitudinal_events 时，逐项独立看图复核车辆纵向动作，输出 longitudinal_events，字段合同以请求 longitudinal_event_review_schema 为准。覆盖每个事件 ID 并保留其全部证据帧；确认对象、起止区间和增速/减速/停车趋势。刹车灯亮本身不能证明车速下降，应结合连续位置及相对运动证据；不足时 status=uncertain，整体 needs_evidence。不得删除减速事件、改成匀速或编造米制速度。既有已接受观察保持不变，冲突通过复核结论报告。
+
+请求 fact_contract_revision=observation-execution.v1 时，上述「核对World直行连接」不要求连接预先存在：已有连接必须一致，未观测连接不表示禁止转向。复核现有入口/出口（包括unknown占位车道）及参与者的同序直行证据，accepted 必须给 exit_lane_continuity=same_order。covered_world_ids 额外允许明确绑定 world.junctions[0].lane_connections 的未知连接问题；仍不覆盖未知方向、主路径或事实冲突。Python 仅建立被复核参与者所需直行边，展开和统一映射仅在执行投影中发生。无此冻结修订的旧请求不适用本例外。
+
+斑马线需要保留相对自车的事实，而不是仅复核存在性。自车入口的每条斑马线给ego_relation_at_start=ahead|behind|unknown；横向道路可给not_on_ego_path。实际跨越有前后边界帧时，给ego_crossing_interval_s=[最后before,最早on或after]并把两帧加入该设施的evidence_frame_ids；未观测跨越写null。入口斑马线的初始关系及跨越时间都不确定时返回needs_evidence。Python会在30/45米参考与这些已观测关系冲突时调整示意位置，不改变视频事件。
+
+
+请求 planning_revision=ego_scene_approximation.v1 时，以以下合同补充上述旧规则：
+- 请求已经过 execution_scope 过滤，只复核请求内车辆；省略的非车辆不需要身份绑定、全程轨迹或不交互证明。保留车辆的停车、减速及设施事实必须保留，不能声明匀速以迁就执行器。
+- 出口 lane_knowledge 明确 kind=exact（总数确认）、minimum（只确认至少 count 条）、unknown。每条已识别出口 lane 给 ordinal_from_right（从0开始）和证据；不能把仅看到一条误写为总共一条。请求提供的结构化声明不能改写。
+- same_order 只来自同序延续证据。出口中间车道没被识别时，outgoing_lane_id 可为 null；Python 先补全独立执行车道再校验路径。已确认 exact 总数不能扩展，已识别车道不能丢失，也不能覆盖已有连接冲突。
+- limitation_bindings 仅补结构化影响对象：exit_lane_assignment 要给 road_id 和全部相关 actor_ids；excluded_background 只能给已排除的背景对象。混合身份、入口车道、事件和运动缺口不能用此机制覆盖。
+- dependency_bindings 的 unused_roadside_side 仅用于精确绑定某道路、某侧、未声明任何路侧实体且无执行引用的路侧用途问题；必须提供 side 和证据，不能覆盖行驶车道问题、已有停车区域或车辆动作影响。
+- 不生成默认几何或数值。原始事实保持未知；估计、补全、范围排除均在 Python 执行计划中留下来源和降级记录。
+
+复核车辆布局时，明确给出自车车道、左/右相邻车道各有哪些运动车辆，交叉检查 actors 与 orders。远处车辆在图像消失点附近不代表位于自车车道；轮迹和近处车道边界延长线优先于图像中心。自车前方可为空，不能为生成跟车关系强指定前车。已清楚跟踪的同向相邻车道车辆不能只因距离远或未形成交互而被视觉复核省略；若上游标为 background，仍可在证据支持时明确include，原始角色观察不改写。停车区域存在与停车车辆是否生成分别说明。
+
+引用规则：covered_world_ids 和 dependency_bindings 的键必须是 request.reference_catalog.world_issue_ids 中真实问题 ID；字段路径不是 ID。covered_limitation_ids 和 limitation_bindings 的键必须是 limitation_ids 中真实限制 ID，不能发明语义标签。类型、枚举及必填性以所给 Schema 为准。非入口车道数限制可通过共享 limitation_binding_schema 关联已覆盖的实际 World 问题；仅当无任何对象或事件依赖、影响仅为 lane_count 时适用。未关联、混合影响及主路径冲突继续保留门禁。

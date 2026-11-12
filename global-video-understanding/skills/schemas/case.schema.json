@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "workflow_contract", "case_id", "created_at", "source", "parameters"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "workflow_contract": {"enum": ["video-case-v1-global-first-packed", "video-case-v2-short-aware-packed", "video-case-world-behavior"]},
+    "case_id": {"pattern": "^case_(?:[0-9a-f]{16}|[0-9]{8}T[0-9]{9}Z_[0-9a-f]{8})$"}, "created_at": {"type": "string"},
+    "source": {"type": "object", "additionalProperties": false, "required": ["sha256", "size_bytes"], "properties": {"sha256": {"pattern": "^[0-9a-f]{64}$"}, "size_bytes": {"type": "integer", "minimum": 1}}},
+    "parameters": {"type": "object"}
+  }
+}

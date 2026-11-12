@@ -1,0 +1,28 @@
+{
+  "mode": "controlled",
+  "emit_placeholder_on_core_unknown": true,
+  "local_road_length_m": 70.0,
+  "highway_length_m": 300.0,
+  "driving_lane_width_m": 3.5,
+  "parking_width_m": 3.0,
+  "weather_compatibility_value": "clear",
+  "straight_preview": {
+    "enabled": false,
+    "version": "straight-preview.v1",
+    "ego_speed_kmh": 80.0,
+    "receding_delta_kmh": 5.0,
+    "lead_distance_m": 50.0,
+    "distance_step_m": 15.0,
+    "ego_at_lane_center": true,
+    "actors_at_lane_center": true,
+    "envelope_length_m": 6.0,
+    "envelope_width_m": 2.2
+  },
+  "default_allowed_degradations": [
+    "parking_as_paved_shoulder",
+    "weather_not_applied_downstream",
+    "road_length_policy_default",
+    "driving_lane_width_policy_default",
+    "parking_width_policy_default"
+  ]
+}

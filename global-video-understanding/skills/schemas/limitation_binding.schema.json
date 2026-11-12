@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "actor_ids",
+    "road_id"
+  ],
+  "properties": {
+    "kind": {
+      "enum": [
+        "exit_lane_assignment",
+        "excluded_background",
+        "non_approach_lane_count"
+      ]
+    },
+    "actor_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "road_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "world_issue_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "non_approach_lane_count"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "world_issue_ids"
+        ],
+        "properties": {
+          "actor_ids": {
+            "maxItems": 0
+          },
+          "road_id": {
+            "type": "null"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "actor_ids": {
+            "minItems": 1
+          }
+        },
+        "not": {
+          "required": [
+            "world_issue_ids"
+          ]
+        }
+      }
+    }
+  ]
+}

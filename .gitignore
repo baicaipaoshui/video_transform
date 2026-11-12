@@ -1,0 +1,89 @@
+# The parent repository currently ignores this directory; source tests must be committed.
+!tests/
+!tests/**
+
+# Python environments, caches, and test by-products
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Local editor and operating-system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.claude/settings.local.json
+
+# Local environment files may contain credentials.
+.env
+.env.*
+!.env.example
+
+# Logs and disposable scratch files
+*.log
+*.tmp
+*.bak
+*~
+
+# Local MELA source snapshots are audit inputs, not distributable dependencies.
+tmp_mela/
+
+# Generated root-level OpenX smoke outputs
+/response.xodr
+/response.xosc
+
+# Agent-local credentials and MCP connection state
+/*/credentials.yaml
+/*/.mcp
+/*/drivers/mcp/
+/*/drivers/.legacy_mcp_migration_report.yaml
+
+# Agent runtime/bootstrap state
+/*/.bootstrap_completed
+/*/.skill.json.lock
+/*/history.db
+/*/checkpoints/
+/*/daily/
+/*/digest/
+/*/media/
+/*/mem_agent/
+/*/mem_metadata/
+/*/mem_session/
+/*/memory/
+/*/resource/
+/*/sessions/
+/*/state/
+/*/task_runs/
+/*/tool_results/
+/*/diagnostics/
+/*/chats.json
+/*/jobs.json
+
+# Pipeline runtime and local audit evidence.
+/diagnostics/
+/video_extractor/cases/
+/video_extractor/runs/
+
+# One-off machine/case-specific verification helpers.
+/verify_fix.py
+/*/tmp_*.py
+
+# Additional runtime and local-only state for this standalone repository.
+*.db
+*.db-shm
+*.db-wal
+.agent/
+/*/.qwenpaw/
+/*/MEMORY.md
+/*/PROFILE.md
+/*/HEARTBEAT.md
+/audit_reports/
+/video-coordinator/scene_corrections/
+/video_extractor/core_approximate_deliveries/
+/video_extractor/description_fallback_deliveries/

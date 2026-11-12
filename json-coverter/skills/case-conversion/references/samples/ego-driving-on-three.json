@@ -1,0 +1,544 @@
+{
+    "scene": {
+        "id": "00aee78d-7ad2-44c2-9a7b-6044c8f9b966",
+        "name": "Ego merging to third lane before intersection",
+        "type": "intersection",
+        "description": "Ego driving on a three lane road with dashed lanes, merging to the third lane from the second lane before entering the intersection to take a left turn.",
+        "road_network": {
+            "id": "58a3e801-0ec3-42ad-8515-e11afe33b918",
+            "name": "Highway intersection with ego merging for left turn",
+            "roads": [
+                {
+                    "id": "fd33e377-4815-42ac-aa88-4e7fce336907",
+                    "name": "Road_1",
+                    "length": 300.0,
+                    "segments": [
+                        {
+                            "id": "e4f8132f-2385-4061-ad2a-d7d49ad0dd90",
+                            "name": "Road_1_Seg_1",
+                            "lanes": [
+                                {
+                                    "id": "e29c5825-ef56-4040-8a39-f5ce814b602b",
+                                    "name": "Road_1_Seg_1_Lane_1",
+                                    "type": "driving",
+                                    "index": 0,
+                                    "width": 3.5,
+                                    "direction": "forward",
+                                    "parent_id": "e4f8132f-2385-4061-ad2a-d7d49ad0dd90",
+                                    "description": "right-most forward driving lane, suitable for straight or right maneuvers",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "right"
+                                    ],
+                                    "left_lane_marking_type": "dashed",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "solid",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "01f87a91-60e0-4dc1-a3cc-478a603146b0",
+                                    "name": "Road_1_Seg_1_Lane_2",
+                                    "type": "driving",
+                                    "index": 1,
+                                    "width": 3.5,
+                                    "direction": "forward",
+                                    "parent_id": "e4f8132f-2385-4061-ad2a-d7d49ad0dd90",
+                                    "description": "center forward driving lane, used for straight maneuvers",
+                                    "allowed_maneuvers": [
+                                        "straight"
+                                    ],
+                                    "left_lane_marking_type": "dashed",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "d06b907d-6663-42fb-b1dc-ed1f9f5e8504",
+                                    "name": "Road_1_Seg_1_Lane_3",
+                                    "type": "driving",
+                                    "index": 2,
+                                    "width": 3.5,
+                                    "direction": "forward",
+                                    "parent_id": "e4f8132f-2385-4061-ad2a-d7d49ad0dd90",
+                                    "description": "left-most forward driving lane, used for straight and left maneuvers (ego merges here to turn left)",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "left"
+                                    ],
+                                    "left_lane_marking_type": "solid",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "28500735-f830-4a59-8c1b-71ea1dc1477f",
+                                    "name": "Road_1_Seg_1_Lane_4",
+                                    "type": "driving",
+                                    "index": 3,
+                                    "width": 3.5,
+                                    "direction": "backward",
+                                    "parent_id": "e4f8132f-2385-4061-ad2a-d7d49ad0dd90",
+                                    "description": "left-most backward driving lane, for opposing traffic",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "right",
+                                        "left"
+                                    ],
+                                    "left_lane_marking_type": "solid",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                }
+                            ],
+                            "length": 300.0,
+                            "parent_id": "fd33e377-4815-42ac-aa88-4e7fce336907",
+                            "shape_type": "straight",
+                            "description": "first segment, southern entry straight road segment, 3 lanes distinguished by dashed lane markings, ego merges from second to third lane before intersection, right-hand traffic",
+                            "order_index": 0,
+                            "road_radius": null,
+                            "left_shoulder": null,
+                            "left_sidewalk": null,
+                            "right_shoulder": null,
+                            "right_sidewalk": null
+                        }
+                    ],
+                    "parent_id": "58a3e801-0ec3-42ad-8515-e11afe33b918",
+                    "description": "southern approach containing ego-vehicle merging from second to third lane before intersection, right hand traffic",
+                    "connection_points": {}
+                },
+                {
+                    "id": "e5746024-fa96-4cbb-ac7e-f07f22ed83a5",
+                    "name": "Road_2",
+                    "length": 300.0,
+                    "segments": [
+                        {
+                            "id": "bce95630-cb44-4256-bb57-b1cea234ea37",
+                            "name": "Road_2_Seg_1",
+                            "lanes": [
+                                {
+                                    "id": "276d397f-91b6-44ca-bd37-465f8e22d33d",
+                                    "name": "Road_2_Seg_1_Lane_1",
+                                    "type": "driving",
+                                    "index": 0,
+                                    "width": 3.5,
+                                    "direction": "forward",
+                                    "parent_id": "bce95630-cb44-4256-bb57-b1cea234ea37",
+                                    "description": "Right-most forward driving lane on straight segment, suitable for merging.",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "right"
+                                    ],
+                                    "left_lane_marking_type": "dashed",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "solid",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "6aa73b82-9307-42da-9592-f0226d0a866f",
+                                    "name": "Road_2_Seg_1_Lane_2",
+                                    "type": "driving",
+                                    "index": 1,
+                                    "width": 3.5,
+                                    "direction": "forward",
+                                    "parent_id": "bce95630-cb44-4256-bb57-b1cea234ea37",
+                                    "description": "Center forward driving lane on straight segment, used for through and merging traffic.",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "left",
+                                        "right"
+                                    ],
+                                    "left_lane_marking_type": "dashed",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "9cb76272-06d6-41c2-acf3-c0830f4174c9",
+                                    "name": "Road_2_Seg_1_Lane_3",
+                                    "type": "driving",
+                                    "index": 2,
+                                    "width": 3.5,
+                                    "direction": "forward",
+                                    "parent_id": "bce95630-cb44-4256-bb57-b1cea234ea37",
+                                    "description": "Left-most forward driving lane on straight segment, suitable for left turns at intersection.",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "left"
+                                    ],
+                                    "left_lane_marking_type": "solid",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "4d73f4ca-2b24-42a8-877e-1924f32dd599",
+                                    "name": "Road_2_Seg_1_Lane_4",
+                                    "type": "driving",
+                                    "index": 3,
+                                    "width": 3.5,
+                                    "direction": "backward",
+                                    "parent_id": "bce95630-cb44-4256-bb57-b1cea234ea37",
+                                    "description": "Left-most backward driving lane for opposing traffic.",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "right"
+                                    ],
+                                    "left_lane_marking_type": "solid",
+                                    "left_lane_marking_color": "yellow",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "09e4f9f9-86e5-4847-b883-5ce15033349c",
+                                    "name": "Road_2_Seg_1_Lane_5",
+                                    "type": "driving",
+                                    "index": 4,
+                                    "width": 3.5,
+                                    "direction": "backward",
+                                    "parent_id": "bce95630-cb44-4256-bb57-b1cea234ea37",
+                                    "description": "Center backward driving lane for opposing traffic.",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "left",
+                                        "right"
+                                    ],
+                                    "left_lane_marking_type": "dashed",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "18dcfb7a-6504-4581-a823-4dc60875f259",
+                                    "name": "Road_2_Seg_1_Lane_6",
+                                    "type": "driving",
+                                    "index": 5,
+                                    "width": 3.5,
+                                    "direction": "backward",
+                                    "parent_id": "bce95630-cb44-4256-bb57-b1cea234ea37",
+                                    "description": "Right-most backward driving lane for opposing traffic.",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "left"
+                                    ],
+                                    "left_lane_marking_type": "dashed",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "solid",
+                                    "right_lane_marking_color": "white"
+                                }
+                            ],
+                            "length": 300.0,
+                            "parent_id": "e5746024-fa96-4cbb-ac7e-f07f22ed83a5",
+                            "shape_type": "straight",
+                            "description": "first segment, western exit straight road segment with three dashed lanes, right-hand traffic, suitable for merging and left turn maneuvers.",
+                            "order_index": 0,
+                            "road_radius": null,
+                            "left_shoulder": null,
+                            "left_sidewalk": null,
+                            "right_shoulder": null,
+                            "right_sidewalk": null
+                        }
+                    ],
+                    "parent_id": "58a3e801-0ec3-42ad-8515-e11afe33b918",
+                    "description": "western approach, left side of the intersection, right hand traffic",
+                    "connection_points": {}
+                },
+                {
+                    "id": "e055e53d-7fa7-41cf-a730-6bf0890ca99f",
+                    "name": "Road_3",
+                    "length": 300.0,
+                    "segments": [
+                        {
+                            "id": "2e3b1cec-949f-40fd-b463-9a5d47759f61",
+                            "name": "Road_3_Seg_1",
+                            "lanes": [
+                                {
+                                    "id": "cd7c2b6e-3959-430f-a266-463b5790e101",
+                                    "name": "Road_3_Seg_1_Lane_1",
+                                    "type": "driving",
+                                    "index": 0,
+                                    "width": 3.5,
+                                    "direction": "forward",
+                                    "parent_id": "2e3b1cec-949f-40fd-b463-9a5d47759f61",
+                                    "description": "right-most forward driving lane, straight segment, suitable for merging and straight maneuvers",
+                                    "allowed_maneuvers": [
+                                        "straight"
+                                    ],
+                                    "left_lane_marking_type": "dashed",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "8e97b86a-f61e-4af9-8315-33a908e367e7",
+                                    "name": "Road_3_Seg_1_Lane_2",
+                                    "type": "driving",
+                                    "index": 1,
+                                    "width": 3.5,
+                                    "direction": "forward",
+                                    "parent_id": "2e3b1cec-949f-40fd-b463-9a5d47759f61",
+                                    "description": "center forward driving lane, straight segment, facilitates merging and left turn maneuvers",
+                                    "allowed_maneuvers": [
+                                        "straight",
+                                        "left"
+                                    ],
+                                    "left_lane_marking_type": "dashed",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "2e924f62-b845-4a92-848f-e3d49246ddd1",
+                                    "name": "Road_3_Seg_1_Lane_3",
+                                    "type": "driving",
+                                    "index": 2,
+                                    "width": 3.5,
+                                    "direction": "forward",
+                                    "parent_id": "2e3b1cec-949f-40fd-b463-9a5d47759f61",
+                                    "description": "left-most forward driving lane, straight segment, primarily for left turn maneuvers",
+                                    "allowed_maneuvers": [
+                                        "left"
+                                    ],
+                                    "left_lane_marking_type": "dashed",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                },
+                                {
+                                    "id": "1502f085-e5df-4530-bcee-d4187698c113",
+                                    "name": "Road_3_Seg_1_Lane_4",
+                                    "type": "driving",
+                                    "index": 3,
+                                    "width": 3.5,
+                                    "direction": "backward",
+                                    "parent_id": "2e3b1cec-949f-40fd-b463-9a5d47759f61",
+                                    "description": "right-most backward driving lane, straight segment, for traffic exiting the intersection",
+                                    "allowed_maneuvers": [
+                                        "straight"
+                                    ],
+                                    "left_lane_marking_type": "dashed",
+                                    "left_lane_marking_color": "white",
+                                    "right_lane_marking_type": "dashed",
+                                    "right_lane_marking_color": "white"
+                                }
+                            ],
+                            "length": 300.0,
+                            "parent_id": "e055e53d-7fa7-41cf-a730-6bf0890ca99f",
+                            "shape_type": "straight",
+                            "description": "First segment, northern exit straight road segment with three lanes marked by dashed lines, facilitating merging and left turn maneuvers, right-hand traffic.",
+                            "order_index": 0,
+                            "road_radius": null,
+                            "left_shoulder": null,
+                            "left_sidewalk": null,
+                            "right_shoulder": null,
+                            "right_sidewalk": null
+                        }
+                    ],
+                    "parent_id": "58a3e801-0ec3-42ad-8515-e11afe33b918",
+                    "description": "northern approach, top side of the intersection, right hand traffic",
+                    "connection_points": {}
+                }
+            ],
+            "country": "unknown",
+            "junctions": [
+                {
+                    "id": "90e40a13-d6ca-47ef-adeb-13b06fa4a343",
+                    "name": "Junction_1",
+                    "type": "t_junction",
+                    "parent_id": "58a3e801-0ec3-42ad-8515-e11afe33b918",
+                    "description": "T junction connecting the southern, western, and northern roads where ego merges and turns left",
+                    "num_connections": 3,
+                    "connection_points": {
+                        "A": {
+                            "id": "232d49ce-51bd-448f-937a-941423b2114e",
+                            "positions": {
+                                "90e40a13-d6ca-47ef-adeb-13b06fa4a343": "A"
+                            },
+                            "element_ids": [
+                                "90e40a13-d6ca-47ef-adeb-13b06fa4a343"
+                            ]
+                        },
+                        "B": {
+                            "id": "d7d688de-0fc1-430b-9a76-53dbb0ebd5ee",
+                            "positions": {
+                                "90e40a13-d6ca-47ef-adeb-13b06fa4a343": "B"
+                            },
+                            "element_ids": [
+                                "90e40a13-d6ca-47ef-adeb-13b06fa4a343"
+                            ]
+                        },
+                        "C": {
+                            "id": "ad410531-716d-4236-a89d-57e49b0928cd",
+                            "positions": {
+                                "90e40a13-d6ca-47ef-adeb-13b06fa4a343": "C"
+                            },
+                            "element_ids": [
+                                "90e40a13-d6ca-47ef-adeb-13b06fa4a343"
+                            ]
+                        },
+                        "E": {
+                            "id": "e93d0290-b3ed-4439-b14b-610861b2887b",
+                            "positions": {
+                                "90e40a13-d6ca-47ef-adeb-13b06fa4a343": "E"
+                            },
+                            "element_ids": [
+                                "90e40a13-d6ca-47ef-adeb-13b06fa4a343"
+                            ]
+                        },
+                        "N": {
+                            "id": "4bd14420-97ab-4907-bf9a-e37998424e0b",
+                            "positions": {
+                                "90e40a13-d6ca-47ef-adeb-13b06fa4a343": "N"
+                            },
+                            "element_ids": [
+                                "90e40a13-d6ca-47ef-adeb-13b06fa4a343"
+                            ]
+                        },
+                        "S": {
+                            "id": "416fe727-7b93-4cbe-811b-a335273137cc",
+                            "positions": {
+                                "90e40a13-d6ca-47ef-adeb-13b06fa4a343": "S"
+                            },
+                            "element_ids": [
+                                "90e40a13-d6ca-47ef-adeb-13b06fa4a343"
+                            ]
+                        }
+                    },
+                    "cardinal_positions": [
+                        "S",
+                        "W",
+                        "N"
+                    ]
+                }
+            ],
+            "parent_id": "00aee78d-7ad2-44c2-9a7b-6044c8f9b966",
+            "description": "A three-lane road with dashed lane markings. The ego vehicle merges from the second to the third lane before entering a T-junction to take a left turn.",
+            "traffic_type": "right_hand_traffic"
+        },
+        "off_road_surface": null
+    },
+    "entities": {
+        "id": "0b604c7c-0743-41e8-a331-684fe613d41f",
+        "assets": [],
+        "scene_id": "00aee78d-7ad2-44c2-9a7b-6044c8f9b966",
+        "crosswalks": [],
+        "traffic_signs": [],
+        "traffic_lights": []
+    },
+    "scenario": {
+        "id": "180a821d-c6ec-4993-ac4f-88f00cd0cae3",
+        "name": "Highway intersection with ego merging for left turn",
+        "animals": [],
+        "scene_id": "00aee78d-7ad2-44c2-9a7b-6044c8f9b966",
+        "vehicles": [
+            {
+                "id": "9de1b255-4ef6-429b-9af1-02001b5bd6d5",
+                "name": "Vehicle_1",
+                "color": "silver",
+                "timeline": [
+                    {
+                        "id": "f35f3167-1606-4c35-93ad-1b0ff3a64f6e",
+                        "name": "Merge to left-most lane",
+                        "type": "lane_change",
+                        "action": {
+                            "id": "665bc3f5-449c-4816-b00b-6312f8b19b65",
+                            "direction": "left",
+                            "acceleration": 0.0,
+                            "turning_angle": 0.0,
+                            "start_position": {
+                                "position": {
+                                    "lateral_unit": "lane",
+                                    "lateral_value": 1.0,
+                                    "reference_name": "Road_1_Seg_1_Lane_2",
+                                    "lateral_specifier": "left_of",
+                                    "longitudinal_unit": "m",
+                                    "longitudinal_value": 200.0,
+                                    "longitudinal_specifier": "ahead_of"
+                                },
+                                "orientation": {
+                                    "specifier": "facing_towards",
+                                    "offset_angle": 0.0,
+                                    "reference_name": "Road_1_Seg_1_Lane_2"
+                                }
+                            },
+                            "start_lateral_velocity": 3.5,
+                            "end_longitudinal_velocity": 30.0,
+                            "start_longitudinal_velocity": 30.0
+                        },
+                        "parent_id": "9de1b255-4ef6-429b-9af1-02001b5bd6d5",
+                        "transition": {
+                            "id": "acc278b8-7c03-451b-8869-371e15a71fb1",
+                            "type": "traveled_distance",
+                            "value": 100.0,
+                            "reference_name": "Road_1_Seg_1_Lane_3"
+                        },
+                        "description": "Ego merges from Road_1_Seg_1_Lane_2 to Road_1_Seg_1_Lane_3 before intersection."
+                    },
+                    {
+                        "id": "0bff41d3-864f-4e1b-8f21-d1a01028f0e3",
+                        "name": "Prepare for left turn",
+                        "type": "drive_straight",
+                        "action": {
+                            "id": "e044dab3-fc8a-40ee-a69c-89b82fb5a170",
+                            "direction": "forward",
+                            "acceleration": 0.0,
+                            "turning_angle": 0.0,
+                            "start_position": null,
+                            "start_lateral_velocity": 0.0,
+                            "end_longitudinal_velocity": 30.0,
+                            "start_longitudinal_velocity": 30.0
+                        },
+                        "parent_id": "9de1b255-4ef6-429b-9af1-02001b5bd6d5",
+                        "transition": {
+                            "id": "3ef6e5af-16a5-4d1c-b84f-be1857ed9ddb",
+                            "type": "traveled_distance",
+                            "value": 100.0,
+                            "reference_name": "Road_1_Seg_1_Lane_3"
+                        },
+                        "description": "Ego continues in left-most lane (Lane_3) to intersection entry."
+                    },
+                    {
+                        "id": "689a1216-c0e1-4fc7-a1fd-bbc874edb8a0",
+                        "name": "Left turn at intersection",
+                        "type": "turn_left",
+                        "action": {
+                            "id": "6e186571-c5c0-428c-8c32-17ab1614f5cc",
+                            "direction": "left",
+                            "acceleration": 0.0,
+                            "turning_angle": 90.0,
+                            "start_position": null,
+                            "start_lateral_velocity": 0.0,
+                            "end_longitudinal_velocity": 20.0,
+                            "start_longitudinal_velocity": 20.0
+                        },
+                        "parent_id": "9de1b255-4ef6-429b-9af1-02001b5bd6d5",
+                        "transition": {
+                            "id": "723600de-c3ef-4e5d-a5c6-73a4d1934ef7",
+                            "type": "traveled_distance",
+                            "value": 30.0,
+                            "reference_name": "Road_2_Seg_1_Lane_1"
+                        },
+                        "description": "Ego turns left from Road_1_Seg_1_Lane_3 into Road_2_Seg_1_Lane_1."
+                    }
+                ],
+                "parent_id": "180a821d-c6ec-4993-ac4f-88f00cd0cae3",
+                "description": "Ego vehicle on Road_1_Seg_1_Lane_3, merging from the center lane (Lane_2) to the left-most lane (Lane_3) before the intersection to prepare for a left turn.",
+                "tracking_id": null,
+                "is_ego_actor": true,
+                "vehicle_class": "sedan"
+            }
+        ],
+        "description": null,
+        "pedestrians": []
+    },
+    "environment": {
+        "id": "5b9cd72d-999b-4ba0-861f-673cc3738d61",
+        "name": "Three lane road merging before intersection",
+        "season": "summer",
+        "daytime": "afternoon",
+        "weather": "clear",
+        "scene_id": "00aee78d-7ad2-44c2-9a7b-6044c8f9b966",
+        "topology": "flat",
+        "description": "Ego driving on a three lane road with dashed lanes, merging to the third lane from the second lane before entering the intersection to take a left turn.",
+        "sun_position": "in_front_of_ego"
+    }
+}

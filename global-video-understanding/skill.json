@@ -1,0 +1,162 @@
+{
+  "schema_version": "workspace-skill-manifest.v1",
+  "version": 1792593057831,
+  "skills": {
+    "video-case-orchestrator": {
+      "enabled": true,
+      "channels": [
+        "all"
+      ],
+      "source": "customized",
+      "metadata": {
+        "name": "video-case-orchestrator",
+        "description": "启动或恢复完整视频 Case，管理唯一生命周期、任务租约、预算和阶段路由；视觉阶段请求使用 World 或 Behavior Skill。",
+        "version_text": "",
+        "emoji": "",
+        "commit_text": "",
+        "source": "customized",
+        "protected": false,
+        "requirements": {
+          "require_bins": [],
+          "require_envs": []
+        },
+        "updated_at": "2026-09-14T05:46:25.161366Z"
+      },
+      "requirements": {
+        "require_bins": [],
+        "require_envs": []
+      },
+      "updated_at": "2026-09-14T05:46:25.161366Z"
+    },
+    "world-understanding": {
+      "enabled": true,
+      "channels": [
+        "all"
+      ],
+      "source": "customized",
+      "metadata": {
+        "name": "world-understanding",
+        "description": "处理已分配的 World 初始视觉理解、geometry_readjudication 或 world_closure 请求，只提交静态世界 candidate 或指定字段补丁。",
+        "version_text": "",
+        "emoji": "",
+        "commit_text": "",
+        "source": "customized",
+        "protected": false,
+        "requirements": {
+          "require_bins": [],
+          "require_envs": []
+        },
+        "updated_at": "2026-10-12T09:41:17.319036Z"
+      },
+      "requirements": {
+        "require_bins": [],
+        "require_envs": []
+      },
+      "updated_at": "2026-10-12T09:41:17.319036Z"
+    },
+    "behavior-understanding": {
+      "enabled": true,
+      "channels": [
+        "all"
+      ],
+      "source": "customized",
+      "metadata": {
+        "name": "behavior-understanding",
+        "description": "处理已分配的 Behavior 动态理解或定向修复，基于冻结 World 和证据输出 actors、events、limitations 与事件动作 candidate。",
+        "version_text": "",
+        "emoji": "",
+        "commit_text": "",
+        "source": "customized",
+        "protected": false,
+        "requirements": {
+          "require_bins": [],
+          "require_envs": []
+        },
+        "updated_at": "2026-10-21T14:14:55.338404Z"
+      },
+      "requirements": {
+        "require_bins": [],
+        "require_envs": []
+      },
+      "updated_at": "2026-10-21T14:14:55.338404Z"
+    },
+    "batch-lifecycle": {
+      "enabled": true,
+      "channels": [
+        "all"
+      ],
+      "source": "customized",
+      "metadata": {
+        "name": "batch-lifecycle",
+        "description": "在编排进程内冻结、串行调度、验收或恢复详细 Batch，维护 manifest 和累计 Registry；不执行逐帧视觉判断。",
+        "version_text": "",
+        "emoji": "",
+        "commit_text": "",
+        "source": "customized",
+        "protected": false,
+        "requirements": {
+          "require_bins": [],
+          "require_envs": []
+        },
+        "updated_at": "2026-10-05T01:55:20.989359Z"
+      },
+      "requirements": {
+        "require_bins": [],
+        "require_envs": []
+      },
+      "updated_at": "2026-10-05T01:55:20.989359Z"
+    },
+    "world-reconciliation": {
+      "enabled": true,
+      "channels": [
+        "all"
+      ],
+      "source": "customized",
+      "metadata": {
+        "name": "world-reconciliation",
+        "description": "在编排进程内合并 Batch 冲突、检查 World handoff 并路由必要的 World 裁决；不自行推断视觉事实。",
+        "version_text": "",
+        "emoji": "",
+        "commit_text": "",
+        "source": "customized",
+        "protected": false,
+        "requirements": {
+          "require_bins": [],
+          "require_envs": []
+        },
+        "updated_at": "2026-10-05T01:55:20.997422Z"
+      },
+      "requirements": {
+        "require_bins": [],
+        "require_envs": []
+      },
+      "updated_at": "2026-10-05T01:55:20.997422Z"
+    },
+    "case-delivery": {
+      "enabled": true,
+      "channels": [
+        "all"
+      ],
+      "source": "customized",
+      "metadata": {
+        "name": "case-delivery",
+        "description": "确定性构建 analysis、调用 Converter、验证目标并生成报告和发布；支持只读离线预检，不承担视觉理解。",
+        "version_text": "",
+        "emoji": "",
+        "commit_text": "",
+        "source": "customized",
+        "protected": false,
+        "requirements": {
+          "require_bins": [],
+          "require_envs": []
+        },
+        "updated_at": "2026-10-08T07:42:14.438922Z"
+      },
+      "requirements": {
+        "require_bins": [],
+        "require_envs": []
+      },
+      "updated_at": "2026-10-08T07:42:14.438922Z"
+    }
+  }
+}

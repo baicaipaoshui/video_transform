@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "World census v6 observation reference extension",
+  "description": "Typed observation references only. Exclusion authority requires a verified census-execution.v2 receipt; legacy execution semantics do not change.",
+  "type": "array",
+  "minItems": 1,
+  "uniqueItems": true,
+  "items": {"type": "string", "minLength": 1}
+}

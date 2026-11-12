@@ -1,0 +1,32 @@
+{
+  "schema_version": "workspace-skill-manifest.v1",
+  "version": 1794323987531,
+  "skills": {
+    "video-pipeline": {
+      "enabled": true,
+      "channels": [
+        "all"
+      ],
+      "source": "customized",
+      "metadata": {
+        "name": "video-pipeline",
+        "description": "处理前视行车视频并返回 v3 完整信封或兼容 v2 结果；不用于单独执行内部阶段。",
+        "version_text": "",
+        "emoji": "",
+        "commit_text": "",
+        "source": "customized",
+        "protected": false,
+        "requirements": {
+          "require_bins": [],
+          "require_envs": []
+        },
+        "updated_at": "2026-11-03T16:06:45.100199Z"
+      },
+      "requirements": {
+        "require_bins": [],
+        "require_envs": []
+      },
+      "updated_at": "2026-11-03T16:06:45.100199Z"
+    }
+  }
+}

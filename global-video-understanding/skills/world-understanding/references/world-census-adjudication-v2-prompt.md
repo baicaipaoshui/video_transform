@@ -1,0 +1,12 @@
+使用 world-understanding，只处理现有 world_closure 请求中的联合裁定。读取 ${request_path}，只查看 frames.path 指定的全部已有 JPEG；不得扩大图片范围或启动其他任务/session。只写 ${candidate_path}，不得改请求、World、Registry、Batch 或 Case 状态。
+按 response_schema 回答。layout_and_census 的 layout 遵守内层冻结布局合同；census_after_layout 的 layout=null。身份判断不提供速度、距离或其他米制量。
+逐项覆盖 records 的 issue_id，不漏不重复。不同 Batch 的 object_id 只在各自批次/帧有效；相同帧或相似描述不等于同一对象。candidate_actor_ids 是待验证假设。
+evidence_plan 是程序冻结的检查要求，不是身份结论。frame_reasons 说明选帧用途，obligations.links 指定每个允许关联的已有身份所需目击帧；这些帧必须全部实际支持连续身份才能 existing。不能仅因帧被选中就声称车辆出现；遮挡/出画导致链路不能确认时保留 unresolved。不得跳过困难过渡帧，也不得根据整体图片变化分数推断身份。
+bindings.outcome 为 existing/new/excluded_opposing/unresolved。每项 evidence_frame_ids 包含原记录帧；existing/new 的证据均须有对应车辆 sightings。existing 关联 evidence_plan.review_actor_ids 中的已有身份；new 由 Python 分配 ID。未知身份保持 unresolved，vehicle_key=null、separation=null。
+每个 vehicle 声明 role=binding 或 comparison。binding 用于最终关联或已有拆分的保留父车；comparison 仅为候选否定提供已有 Actor 的图像锚点，不更新登记、不提前首次出现。comparison 必须被 candidate_refutations 引用，actor_id 是原 ID，split_from_actor_id=null。所有车辆 sightings 都须有精确帧/时间、图像特征、已确认 lane_id 或 null，以及与同帧已登记车辆的 distinct_from_actor_ids；不得仅凭车型颜色相似建立身份。
+candidate_refutations 无否定时写 []。每个否定项给 actor_id、witness_vehicle_key、reason 和 subject_sightings。subject 是该 issue 原帧里的对象，必须从原帧追踪至与候选车辆同帧共现的画面，distinct_from_actor_ids 包含被否定 ID；witness 从其原首次帧关联到共现画面。两段跟踪覆盖计划中区间内的全部提供帧。正向绑定时 subject_sightings 必须与绑定车辆对应 sightings 完全一致。不能用“不像”或缺席代替同帧区分证据。
+改绑其他已有身份需同时证明：原候选（除最终身份外）被否定，新的目标满足其冻结 links。只证明不是 actor_002，不能直接认为就是 actor_007。允许在 unresolved 下保存候选否定，但不能据此声称身份已解决。
+独立新车 actor_id=null、split_from_actor_id=null，至少两帧；须通过 refutations 区分该问题 comparison_actor_ids 中全部已有身份以防重复登记。证据不足时保持 unresolved。真正误合并拆分才使用 split_from_actor_id=旧 ID，不能拿拆分绕过错误候选。每个旧身份至多拆成两车、保留原首次对象、各至少两帧且共现，沿用既有拆分约束。
+已有身份保留 identity_description/color/vehicle_class 和已知初始车道；comparison 也须保留。仅新车或真正拆分可给新描述，未知细类写 unknown。existing 提前 first_seen 时仍须有原首次之前/之后的目击及所有提供的过渡帧。已知 road_reference 不得丢失。
+excluded_opposing 仅用于原 candidate_actor_ids=[] 的对象，candidate_refutations=[]，vehicle_key=null；separation 必须证明另一侧物理隔离对向道路、无同向交互，涵盖原记录帧及请求首末帧，separator 为 barrier/median。道路侧别、方向、隔离或交互不明时 unresolved。
+允许部分未决。Python 验收后保存裁定凭证，仍有未决则停止交付；不要为了完成任务编造身份。写入 candidate 后停止。

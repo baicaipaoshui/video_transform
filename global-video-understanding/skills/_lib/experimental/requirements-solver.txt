@@ -1,0 +1,2 @@
+# Optional until the facts_constraints_v1 end-to-end path is fully validated.
+scipy>=1.13,<2

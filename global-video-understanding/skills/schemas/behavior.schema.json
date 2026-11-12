@@ -1,0 +1,560 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "world_evidence_epoch",
+    "actors",
+    "events",
+    "challenge_resolutions",
+    "semantic_limitations",
+    "executor_primitives"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "video-case-world-behavior"
+    },
+    "world_evidence_epoch": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "actors": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "actor_id",
+          "actor_type",
+          "identity_description",
+          "simulation_role",
+          "is_static",
+          "trajectory"
+        ],
+        "properties": {
+          "actor_id": {
+            "$ref": "actor_fields.schema.json#/$defs/actor_id"
+          },
+          "actor_type": {
+            "$ref": "actor_fields.schema.json#/$defs/actor_type"
+          },
+          "color": {
+            "$ref": "actor_fields.schema.json#/$defs/color"
+          },
+          "vehicle_class": {
+            "$ref": "actor_fields.schema.json#/$defs/vehicle_class"
+          },
+          "roadside_area_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "parking_side": {
+            "enum": [
+              "left",
+              "right",
+              null
+            ]
+          },
+          "identity_description": {
+            "$ref": "actor_fields.schema.json#/$defs/identity_description"
+          },
+          "first_seen_frame_id": {
+            "$ref": "actor_fields.schema.json#/$defs/first_seen_frame_id"
+          },
+          "simulation_role": {
+            "enum": [
+              "participant",
+              "background"
+            ]
+          },
+          "direction_evidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "value",
+              "frame_ids",
+              "reason"
+            ],
+            "properties": {
+              "status": {
+                "const": "observed"
+              },
+              "value": {
+                "enum": [
+                  "same_as_ego",
+                  "opposite_to_ego"
+                ]
+              },
+              "frame_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "is_static": {
+            "type": "boolean"
+          },
+          "trajectory": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "minProperties": 1,
+              "properties": {
+                "time_s": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "timestamp_s": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "frame_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "object_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Optional independently established physical object identity, stable across frames; not a per-frame detection ID. Conflicting values under one actor_id are fatal."
+                },
+                "lane_id": {
+                  "$ref": "actor_fields.schema.json#/$defs/lane_reference"
+                },
+                "road_id": {
+                  "$ref": "actor_fields.schema.json#/$defs/road_reference",
+                  "description": "Optional World road reference for this sample; must own lane_id when both are known. Null is permitted inside a junction or when the road is unknown."
+                },
+                "ordinal_from_right": {
+                  "$ref": "actor_fields.schema.json#/$defs/ordinal_from_right",
+                  "description": "Optional road-local position, zero-based from the outer-right boundary in that road's travel direction; not the numeric suffix of the global lane_id."
+                },
+                "position_ego_m": {
+                  "type": "object",
+                  "properties": {
+                    "x": {
+                      "type": "number"
+                    },
+                    "y": {
+                      "type": "number"
+                    },
+                    "z": {
+                      "type": "number"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "speed_mps": {
+                  "oneOf": [
+                    {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "status",
+                        "value"
+                      ],
+                      "properties": {
+                        "status": {
+                          "enum": [
+                            "observed",
+                            "estimated",
+                            "policy_default",
+                            "placeholder",
+                            "unknown"
+                          ]
+                        },
+                        "value": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "minimum": 0
+                        },
+                        "confidence": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        },
+                        "reason": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "execution_scope_evidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "checked_frame_ids",
+              "visible_frame_ids",
+              "no_interaction",
+              "reason"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "edge_fragment",
+                  "distant_transient",
+                  "execution_relevant"
+                ]
+              },
+              "checked_frame_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "visible_frame_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "no_interaction": {
+                "type": "boolean"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "event_id",
+          "event_type",
+          "involved_actor_ids",
+          "evidence"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "event_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "involved_actor_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "evidence": {
+            "type": "array"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "challenge_resolutions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "challenge_id",
+          "resolution"
+        ],
+        "properties": {
+          "challenge_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "resolution": {
+            "type": "string",
+            "minLength": 1
+          },
+          "execution_effect": {
+            "enum": [
+              "apply_event",
+              "retain_actor_state",
+              "exclude_unconfirmed_event"
+            ]
+          },
+          "decision": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1
+          },
+          "consistency": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence_frame_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "semantic_limitations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "limitation_id",
+          "description",
+          "impact_domains"
+        ],
+        "properties": {
+          "limitation_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "limitation_kind": {
+            "enum": [
+              "absolute_scale",
+              "other"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "impact_domains": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "execution_effect": {
+            "enum": [
+              "bounded_uncertainty",
+              "blocks_execution"
+            ]
+          },
+          "scope_binding": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "world_paths",
+              "representation",
+              "affected_event_ids"
+            ],
+            "properties": {
+              "kind": {
+                "const": "physically_separated_opposing_observations"
+              },
+              "world_paths": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "const": "world.road.opposite_direction_lanes"
+                }
+              },
+              "representation": {
+                "const": "observation_only"
+              },
+              "affected_event_ids": {
+                "type": "array",
+                "maxItems": 0
+              }
+            }
+          },
+          "census_issue_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "executor_primitives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "primitive_id",
+          "actor_id",
+          "type"
+        ],
+        "properties": {
+          "primitive_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "actor_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "lane_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "position_ego_m": {
+            "type": "object",
+            "required": [
+              "x",
+              "y"
+            ],
+            "properties": {
+              "x": {
+                "type": "number"
+              },
+              "y": {
+                "type": "number"
+              },
+              "z": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": true
+          },
+          "speed_kmh": {
+            "oneOf": [
+              {
+                "type": "number",
+                "minimum": 0
+              },
+              {
+                "type": "object",
+                "required": [
+                  "status",
+                  "value"
+                ],
+                "properties": {
+                  "status": {
+                    "enum": [
+                      "observed",
+                      "estimated",
+                      "policy_default"
+                    ]
+                  },
+                  "value": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "initial_state"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            },
+            "then": {
+              "required": [
+                "lane_id",
+                "position_ego_m",
+                "speed_kmh"
+              ]
+            }
+          }
+        ],
+        "additionalProperties": true
+      }
+    },
+    "video_fidelity": {
+      "$ref": "video_fidelity.schema.json"
+    }
+  },
+  "not": {
+    "anyOf": [
+      {
+        "required": [
+          "world"
+        ]
+      },
+      {
+        "required": [
+          "road"
+        ]
+      },
+      {
+        "required": [
+          "roads"
+        ]
+      },
+      {
+        "required": [
+          "lanes"
+        ]
+      },
+      {
+        "required": [
+          "junctions"
+        ]
+      }
+    ]
+  }
+}

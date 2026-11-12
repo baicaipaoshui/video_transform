@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_version", "audited_at", "gate_mode", "runtime_source_required",
+    "road_sources", "audit_provenance", "workflows", "degradations", "render_runner"
+  ],
+  "properties": {
+    "manifest_version": {"const": "mela-capabilities.v1"},
+    "audited_at": {"type": "string", "format": "date"},
+    "gate_mode": {"const": "manifest_contract"},
+    "runtime_source_required": {"const": false},
+    "road_sources": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"enum": ["preview_json", "external_xodr"]}
+    },
+    "audit_provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["method", "source_hashes"],
+      "properties": {
+        "method": {"const": "static_source_review"},
+        "source_hashes": {
+          "type": "object", "minProperties": 1,
+          "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "workflows": {
+      "type": "object", "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["scene_types", "actor_types", "verification"],
+        "properties": {
+          "scene_types": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "actor_types": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "verification": {"enum": ["source_verified", "pending_probe", "unsupported"]}
+        }
+      }
+    },
+    "degradations": {
+      "type": "object", "minProperties": 1,
+      "additionalProperties": {
+        "type": "object", "additionalProperties": false,
+        "required": ["impact_domains", "verification"],
+        "properties": {
+          "impact_domains": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "verification": {"enum": ["source_verified", "pending_probe", "unsupported_for_publish"]}
+        }
+      }
+    },
+    "render_runner": {
+      "type": "object", "additionalProperties": false,
+      "required": ["available", "verification"],
+      "properties": {
+        "available": {"type": "boolean"},
+        "verification": {"enum": ["render_verified", "not_executed", "failed"]}
+      }
+    }
+  }
+}

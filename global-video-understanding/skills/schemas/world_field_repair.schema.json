@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "base_sha256", "request_sha256", "operations"],
+  "properties": {
+    "contract_version": {"const": "world-field-repair.v1"},
+    "base_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "request_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "operations": {"type": "array", "maxItems": 32, "items": {"$ref": "#/$defs/operation"}},
+    "status": {"enum": ["patch", "needs_evidence", "blocked_by_patch_contract"]},
+    "reason": {"type": "string", "minLength": 1}
+  },
+  "allOf": [{
+    "if": {"required": ["status"], "properties": {"status": {"not": {"const": "patch"}}}},
+    "then": {"required": ["reason"], "properties": {"operations": {"maxItems": 0}}}
+  }],
+  "$defs": {
+    "legacy_notes": {"type": "string", "maxLength": 4096, "description": "world-patch-notes.v1: archive as audit text, never part of the canonical patch or World facts."},
+    "operation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["op", "path", "value", "evidence_frame_ids"],
+      "properties": {
+        "op": {"enum": ["add", "replace"]},
+        "path": {"type": "string", "pattern": "^/"},
+        "value": {},
+        "evidence_frame_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+      }
+    }
+  }
+}
